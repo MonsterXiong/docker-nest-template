@@ -4,9 +4,10 @@ import { CommonController } from './common.controller';
 import { BootstrapModule } from '../bootstrap/bootstrap.module';
 import { DpTemplateExtendModule } from '../dpTemplateExtend/dpTemplateExtend.module';
 import { DpProjectExtendModule } from '../dpProjectExtend/dpProjectExtend.module';
+import { DpTemplatePromptModule } from 'src/modules/base/dpTemplatePrompt';
 
 @Module({
-  imports:[BootstrapModule,DpTemplateExtendModule,DpProjectExtendModule],
+  imports:[BootstrapModule,DpTemplateExtendModule,DpProjectExtendModule,DpTemplatePromptModule],
   controllers: [CommonController],
   providers: [CommonService],
   exports:[CommonService]

@@ -134,10 +134,9 @@ import {
   
     @Post('saveDpEnvConfigBatch')
     @ApiOperation({ summary: '保存环境变量配置(批量)' })
-    saveDpEnvConfigBatch(@Body() entity: DpEnvConfig[],@Req() req: Request) {
-      return this.dpEnvConfigService.saveBatch(entity,req); 
+    saveDpEnvConfigBatch(@Body() obj: any,@Req() req: Request) {
+      return this.dpEnvConfigService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDpEnvConfig')
     @ApiOperation({ summary: '修改环境变量配置' })
     updateDpEnvConfig(@Body() entity: DpEnvConfig,@Req() req: Request) {

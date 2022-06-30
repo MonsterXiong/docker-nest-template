@@ -3,6 +3,7 @@ import { VM } from 'vm2';
 import { parseColumnType } from './parseColumnType';
 import * as treeTool from 'src/utils/treeTool';
 import * as _ from 'lodash';
+import { getParams } from './getParams';
 export class VMRunner {
   private static instance: VMRunner | null = null; // 静态属性保存唯一实例
   vm: VM;
@@ -16,6 +17,7 @@ export class VMRunner {
           changeCase,
           parseColumnType,
           treeTool,
+          getParams,
           _,
         },
         console: {

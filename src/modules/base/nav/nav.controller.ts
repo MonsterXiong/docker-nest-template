@@ -134,10 +134,9 @@ import {
   
     @Post('saveNavBatch')
     @ApiOperation({ summary: '保存导航(批量)' })
-    saveNavBatch(@Body() entity: Nav[],@Req() req: Request) {
-      return this.navService.saveBatch(entity,req); 
+    saveNavBatch(@Body() obj: any,@Req() req: Request) {
+      return this.navService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateNav')
     @ApiOperation({ summary: '修改导航' })
     updateNav(@Body() entity: Nav,@Req() req: Request) {

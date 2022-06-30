@@ -139,10 +139,42 @@ export class DpTemplateService extends CommonService {
       return this.insert(entity,req)
     }
   }
-  async saveBatch(entity: Partial<DpTemplate>[],req) {
-    for await (const entityItem of entity) {
-      this.save(entityItem,req)
+ 
+  async saveBatch(newObjectList: Partial<DpTemplate>[],oldKeyList:string[],req) {
+    let newList = newObjectList
+    let oldList = oldKeyList
+    if(!newObjectList){
+      newList = []
     }
+    // 主键处理
+    newList.forEach(item => {
+      // 主键
+      if(!item.id){
+        item.id = nanoid()
+      }
+    });
+
+    const objectList_update = [];//待更新
+		const objectList_insert = [];//待新增
+		const idList_new = []; // 新主键ids
+    
+    newList.forEach(item => {
+      idList_new.push(item.id)
+			if(oldList.includes(item.id)){ // 判断对象时需要调用新增方法还是更新方法
+				objectList_update.push(item); // 添加至待更新集合
+			}else{
+				objectList_insert.push(item); // 添加至待新增集合
+			}
+    });
+    const idList_delete = oldList.filter(item => !idList_new.includes(item)); //待删除
+
+    const [deleteList,updateList,insertList] = await Promise.all([this.deleteBatch(idList_delete,req),this.updateBatch(objectList_update,req),this.insertBatch(objectList_insert,req)])
+
+		return {
+      deleteList,
+      updateList,
+      insertList
+    };
   }
 
   async update(entity: Partial<DpTemplate>,req) {
@@ -156,8 +188,9 @@ export class DpTemplateService extends CommonService {
 
   async updateBatch(entity: Partial<DpTemplate>[],req) {
     for await (const entityItem of entity) {
-      this.update(this._updateEntity(entityItem,req),req)
+      await this.update(this._updateEntity(entityItem,req),req)
     }
+    return
   }
 
   _createEntity(entity: Partial<DpTemplate>,req) {

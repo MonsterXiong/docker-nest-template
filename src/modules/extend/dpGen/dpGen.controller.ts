@@ -55,25 +55,91 @@ export class DpGenController {
     return this.dpGenService.getProjectRelData(id,GenTypeMapEnum.PAGE)
   }
 
+  @Post('getFePageByMenuId')
+  @ApiOperation({ summary: '通过菜单Id获取page' })
+  getPageByMenuId(@Query('menuId') menuId: string) {
+    return this.dpGenService.getMenuRelData(menuId,GenTypeMapEnum.PAGE)
+  }
+
+  @Post('genFePageByMenuId')
+  @ApiOperation({ summary: '通过菜单Id生成page' })
+  genPageByMenuId(@Query('menuId') menuId: string, @Res() res: Response) {
+    return this.dpGenService.genMenuRelData(menuId,GenTypeMapEnum.PAGE,res)
+  }
+
+  @Post('getFeRouteByMenuId')
+  @ApiOperation({ summary: '通过菜单Id获取route' })
+  getFeRouteByMenuId(@Query('menuId') menuId: string) {
+    return this.dpGenService.getMenuRelData(menuId,GenTypeMapEnum.ROUTE)
+  }
+
+  @Post('genFeRouteByMenuId')
+  @ApiOperation({ summary: '通过菜单Id生成route' })
+  genFeRouteByMenuId(@Query('menuId') menuId: string, @Res() res: Response) {
+    return this.dpGenService.genMenuRelData(menuId,GenTypeMapEnum.ROUTE,res)
+  }
+
   @Post('getProject')
   @ApiOperation({ summary: '通过项目Id获取项目数据' })
   async getProject(@Query('id') id: string) {
-    return await this.dpGenService.getProject(id)
+    return await this.dpGenService.getFeProject(id)
   }
 
   @Post('genProject')
   @ApiOperation({ summary: '通过项目Id生成项目' })
   genProject(@Query('id') id: string, @Res() res: Response) {
-    return this.dpGenService.genProject(id,res)
+    return this.dpGenService.genFeProject(id,res)
   }
 
   @Get()
-  @ApiOperation({ summary: '生成项目流程-未完成' })
+  @ApiOperation({ summary: '生成项目流程-未启动' })
   async getAuto(@Query('id') id: string) {
     const projectInfo = await this.dpProjectExtendService.getProjectInfo(id)
     const gitUrl = await handleGit(projectInfo);
     await handleCode(gitUrl)
     // 处理jenkins
+
+    // 整个流程确定
+
+    // 第一步：建项目-建Git-建JENKINS-建打包脚本-建首页导航
+
+    // 第二步：后端
+
+    // 第三步：前端
+
+    // 第四步：打包更新到Git并出发Jenkins以及生成打包压缩包
+
+    // 注：每一步都可拆分、单独调用
+
+    // 其它：
+    // A、按照项目处理：测试脚本生成
+    // B、数据迁移服务
+    // C、尽量都传入到线上服务
+    // 开始处理扩展接口问题 =>如果生成扩展接口 对接页面上的扩展按钮
     return 'ok'
+  }
+
+  @Post('handleGit')
+  @ApiOperation({ summary: '通过项目Id操作Git' })
+  async handleGit(@Query('id') id: string, @Res() res: Response){
+    return await this.dpGenService.handlePrepare(id,'git',res)
+  }
+
+  @Post('handleJenkins')
+  @ApiOperation({ summary: '通过项目Id操作Jenkins' })
+  async handleJenkins(@Query('id') id: string, @Res() res: Response){
+    return await this.dpGenService.handlePrepare(id,'jenkins',res)
+  }
+
+  @Post('handleBuildScript')
+  @ApiOperation({ summary: '通过项目Id操作打包脚本' })
+  async handleBuildScript(@Query('id') id: string, @Res() res: Response){
+    return await this.dpGenService.handlePrepare(id,'buildScript',res)
+  }
+
+  @Post('handleHomeNav')
+  @ApiOperation({ summary: '通过项目Id操作首页导航' })
+  async handleHomeNav(@Query('id') id: string, @Res() res: Response){
+    return await this.dpGenService.handlePrepare(id,'homeNav',res)
   }
 }

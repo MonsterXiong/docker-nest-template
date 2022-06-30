@@ -134,10 +134,9 @@ import {
   
     @Post('save<%= TableName %>Batch')
     @ApiOperation({ summary: '保存<%= tableComment %>(批量)' })
-    save<%= TableName %>Batch(@Body() entity: <%= TableName %>[],@Req() req: Request) {
-      return this.<%= tableName%>Service.saveBatch(entity,req); 
+    save<%= TableName %>Batch(@Body() obj: any,@Req() req: Request) {
+      return this.<%= tableName%>Service.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('update<%= TableName %>')
     @ApiOperation({ summary: '修改<%= tableComment %>' })
     update<%= TableName %>(@Body() entity: <%= TableName %>,@Req() req: Request) {

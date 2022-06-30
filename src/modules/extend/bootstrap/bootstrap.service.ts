@@ -6,7 +6,7 @@ export class BootstrapService implements OnModuleInit{
     private pipe;
     // 初始化时自动加载数据
     async onModuleInit() {
-      // this.pipe = await this._getTranslator()
+      this.pipe = await this._getTranslator()
     }
     async _getTranslator() {
       const { pipeline, env } = await import('@xenova/transformers');

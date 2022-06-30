@@ -134,10 +134,9 @@ import {
   
     @Post('saveDocBatch')
     @ApiOperation({ summary: '保存文档(批量)' })
-    saveDocBatch(@Body() entity: Doc[],@Req() req: Request) {
-      return this.docService.saveBatch(entity,req); 
+    saveDocBatch(@Body() obj: any,@Req() req: Request) {
+      return this.docService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDoc')
     @ApiOperation({ summary: '修改文档' })
     updateDoc(@Body() entity: Doc,@Req() req: Request) {

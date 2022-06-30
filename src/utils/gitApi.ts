@@ -20,7 +20,11 @@ export class GitLab {
     const { data } = await this.http.post('/projects', param);
     return data;
   }
-
+  /**
+   * @description 查询子群组下的所有项目
+   * @param namespace_id 
+   * @returns 
+   */
   async getProjectListBySubgroups(namespace_id) {
     let { data } = await this.http.get(
       `/groups/${namespace_id}/projects?per_page=99999`,
@@ -28,6 +32,11 @@ export class GitLab {
     return data;
   }
 
+  /**
+   * 获取子群组信息
+   * @param groupId 
+   * @returns 
+   */
   async getSubgroups(groupId) {
     const { data } = await this.http.get(
       `/groups/${groupId}/subgroups?per_page=9999`,
@@ -35,6 +44,11 @@ export class GitLab {
     return data;
   }
 
+  /**
+   * @description 创建子群组
+   * @param param 
+   * @returns 
+   */
   async createSubGroupAPI(param) {
     const { data } = await this.http.post('/groups', param);
     // GROUP_MEMBERS.forEach(member =>{

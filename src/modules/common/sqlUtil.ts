@@ -119,7 +119,7 @@ function getSortCode(sortParams) {
 function getCode(params) {
   const { conditionParams, sortParams, pageNumber, pageSize } = params
   let code = ".where('sys_is_del = :sysIsDel',{sysIsDel: '0'})"
-  if (conditionParams.length || sortParams.length) {
+  if (conditionParams?.length || sortParams?.length) {
     code += getFilterCode(conditionParams)
     code += getSortCode(sortParams)
     // code+=getPageCode({pageNumber,pageSize})
@@ -153,13 +153,13 @@ function getDataByPage(data, params) {
 export async function queryParams(params, _this) {
   const countFn = new Function('_this', `with(_this){return _this.repository.createQueryBuilder()${getCode(params)}.getCount()}`)
   const resultFn = new Function('_this', `with(_this){return _this.repository.createQueryBuilder()${getCode(params)}${genPageCode(params)}.getMany()}`)
-  const totalCount = await countFn(_this)
+  const count = await countFn(_this)
   const data = await resultFn(_this)
   if(!isSplitPage(params)){
     return data
   }
   return {
-    totalCount,
+    count,
     data
   }
 }

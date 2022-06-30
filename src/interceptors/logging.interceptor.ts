@@ -30,6 +30,11 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(async (data) => {
         const log = new SLog();
+        if(request.originalUrl.startsWith('/common/translator')){
+          console.log('调用翻译服务');
+          
+          return
+        }
         log.id = nanoid()
         log.sysCreateIp = this.getClientIp(request);
         log.method = request.method;

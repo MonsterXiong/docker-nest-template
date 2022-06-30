@@ -20,14 +20,21 @@ export class TransformInterceptor<T>
     const response = ctx.getResponse()
     return next.handle().pipe(
       map(data => {
+        const params:any = {
+          statusCode:200,
+          code: 200,
+          message: '请求成功',
+          timestamp: new Date().toISOString(),
+        }
+        
+        if(data && data.count!== undefined){
+          params.data = data.data
+          params.count = data.count
+        }else{
+          params.data = data
+        }
         response.status(200)
-       return {
-        statusCode:200,
-        code: 200,
-        data,
-        message: '请求成功',
-        timestamp: new Date().toISOString(),
-       }
+       return params
       }),
     );
   }

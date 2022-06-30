@@ -134,10 +134,9 @@ import {
   
     @Post('saveDpTemplateBatch')
     @ApiOperation({ summary: '保存模板(批量)' })
-    saveDpTemplateBatch(@Body() entity: DpTemplate[],@Req() req: Request) {
-      return this.dpTemplateService.saveBatch(entity,req); 
+    saveDpTemplateBatch(@Body() obj: any,@Req() req: Request) {
+      return this.dpTemplateService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDpTemplate')
     @ApiOperation({ summary: '修改模板' })
     updateDpTemplate(@Body() entity: DpTemplate,@Req() req: Request) {

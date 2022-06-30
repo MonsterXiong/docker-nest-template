@@ -83,7 +83,7 @@ export class DpMenu extends CommonEntity {
     nullable: false,
     type: 'varchar',
     comment: '标识',
-    length: 32,
+    length: 255,
   })
   code: string
 

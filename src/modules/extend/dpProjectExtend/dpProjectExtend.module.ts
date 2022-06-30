@@ -7,6 +7,7 @@ import { DbModule } from '../db';
 import { DpEnvConfigModule } from 'src/modules/base/dpEnvConfig';
 import { DpMenuExtendModule } from '../dpMenuExtend/dpMenuExtend.module';
 import { DpMenuModule } from 'src/modules/base/dpMenu';
+import { DpStoreModule } from 'src/modules/base/dpStore';
 @Module({
   imports: [
     DpProjectModule,
@@ -15,6 +16,7 @@ import { DpMenuModule } from 'src/modules/base/dpMenu';
     DpEnvConfigModule,
     DpMenuModule,
     DpMenuExtendModule,
+    DpStoreModule
   ],
   controllers: [DpProjectExtendController],
   providers: [DpProjectExtendService],

@@ -13,7 +13,7 @@ export class DpMenuExtendService {
       ) { }
 
     async queryList(queryCondition){
-        const { data: menuList, totalCount} =
+        const { data: menuList, count} =
         await this.dpMenuService.queryList(queryCondition);
         
         const menuDetailList = await this.dpMenuDetailService.findAll();
@@ -27,7 +27,7 @@ export class DpMenuExtendService {
                   menuDetail,
                 };
             }),
-            totalCount
+            count
         }
     }
 

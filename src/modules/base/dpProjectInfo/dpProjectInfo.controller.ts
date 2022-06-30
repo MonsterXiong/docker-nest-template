@@ -134,10 +134,9 @@ import {
   
     @Post('saveDpProjectInfoBatch')
     @ApiOperation({ summary: '保存项目信息(批量)' })
-    saveDpProjectInfoBatch(@Body() entity: DpProjectInfo[],@Req() req: Request) {
-      return this.dpProjectInfoService.saveBatch(entity,req); 
+    saveDpProjectInfoBatch(@Body() obj: any,@Req() req: Request) {
+      return this.dpProjectInfoService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDpProjectInfo')
     @ApiOperation({ summary: '修改项目信息' })
     updateDpProjectInfo(@Body() entity: DpProjectInfo,@Req() req: Request) {

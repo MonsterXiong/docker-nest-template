@@ -8,6 +8,6 @@ import { <%=TableName %> } from './<%=tableName %>.entity';
   imports: [TypeOrmModule.forFeature([<%=TableName %>])],
   controllers: [<%=TableName %>Controller],
   providers: [<%=TableName %>Service],
-  exports:[<%=TableName %>Service]
+  exports:[<%=TableName %>Service,TypeOrmModule.forFeature([<%=TableName %>])]
 })
 export class <%=TableName %>Module { }

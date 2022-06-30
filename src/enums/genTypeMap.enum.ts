@@ -15,6 +15,7 @@ export enum GenTypeMapEnum {
   PAGE = 'page',
   ROUTE = 'route',
   CONFIG = 'config',
+  STORE = 'global_store',
   BASE_SERVICE = 'base_service',
   EXTEND_SERVICE = 'extend_service',
 
@@ -27,6 +28,7 @@ export const TYPE_MAP_SINGLE = {
   [GenTypeMapEnum.PAGE]: false,
   [GenTypeMapEnum.ROUTE]: false,
   [GenTypeMapEnum.CONFIG]: true,
+  [GenTypeMapEnum.STORE]: false,
   [GenTypeMapEnum.INTERFACE]: false,
   [GenTypeMapEnum.MODULE]: true,
   [GenTypeMapEnum.BASE_SERVICE]: false,

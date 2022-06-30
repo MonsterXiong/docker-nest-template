@@ -134,10 +134,9 @@ import {
   
     @Post('saveDpMenuDetailBatch')
     @ApiOperation({ summary: '保存菜单详情(批量)' })
-    saveDpMenuDetailBatch(@Body() entity: DpMenuDetail[],@Req() req: Request) {
-      return this.dpMenuDetailService.saveBatch(entity,req); 
+    saveDpMenuDetailBatch(@Body() obj: any,@Req() req: Request) {
+      return this.dpMenuDetailService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDpMenuDetail')
     @ApiOperation({ summary: '修改菜单详情' })
     updateDpMenuDetail(@Body() entity: DpMenuDetail,@Req() req: Request) {
