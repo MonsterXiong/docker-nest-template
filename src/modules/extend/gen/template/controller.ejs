@@ -1,0 +1,156 @@
+import {
+    Controller,
+    Post,
+    Body,
+    Query,
+    UploadedFile,
+    UseInterceptors,
+    Res,
+    Req,
+  } from '@nestjs/common';
+  import { <%= TableName %>Service } from './<%= tableName%>.service';
+  import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+  import { <%= TableName %> } from './<%= tableName%>.entity';
+  import { FileInterceptor } from '@nestjs/platform-express';
+  import { Response } from 'express';
+  import { QueryCondition } from 'src/interfaces/queryCondition.interface';
+  import { nanoid } from "nanoid";
+  
+  @ApiTags('<%= tableComment %>接口')
+  @Controller('/<%= ApiPrefix %>/<%= tableName%>')
+  export class <%= TableName %>Controller {
+    constructor(private readonly <%= tableName%>Service: <%= TableName %>Service) {}
+  
+    @Post('delete<%= TableName %>Batch')
+    @ApiOperation({ summary: '删除<%= tableComment %>(批量、递归)' })
+    delete<%= TableName %>Batch(@Body() <%= primaryKey %>List: string[]) {
+      return this.<%= tableName%>Service.deleteBatch(<%= primaryKey %>List);
+    }
+  
+    @Post('download<%= TableName %>Template')
+    @ApiOperation({ summary: '导出<%= tableComment %>模板下载' })
+    async download<%= TableName %>Template(@Res() res: Response): Promise<void> {
+      const buffer = this.<%= tableName%>Service.download<%= TableName %>Template();
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
+      res.send(buffer);
+    }
+  
+    @Post('get<%= TableName %>')
+    @ApiOperation({ summary: '获取<%= tableComment %>' })
+    get<%= TableName %>(@Query('<%= primaryKey %>') <%= primaryKey %>: string) {
+      return this.<%= tableName%>Service.getItem(<%= primaryKey %>);
+    }
+  
+    @Post('import<%= TableName %>ByExcel')
+    @ApiOperation({ summary: '导入<%= tableComment %>' })
+    @UseInterceptors(FileInterceptor('file', {
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+          return callback(new Error('只支持 .xlsx 或 .xls 文件!'), false);
+        }
+        callback(null, true);
+      },
+      limits: {
+        fileSize: 1024 * 1024 * 5 // 限制5MB
+      }
+    }))
+    @ApiOperation({ summary: '文件上传,返回 url 地址' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          file: {
+            description: '文件',
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    })
+    import<%= TableName %>(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+      if (!file) {
+        throw new Error('请选择要导入的文件');
+      }
+      return this.<%= tableName%>Service.importFromExcel(file.buffer, req);
+    }
+  
+    @Post('exportByExcel')
+    @ApiOperation({ summary: '导出Excel' })
+    async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
+      const buffer = await this.<%= tableName%>Service.exportByExcel(query,res);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=<%= tableName%>.xlsx');
+      res.send(buffer);
+    }
+  
+    @Post('exportByJson')
+    @ApiOperation({ summary: '导出JSON' })
+    async exportByJson(@Body() query: QueryCondition, @Res() res: Response) {
+      const json = await this.<%= tableName%>Service.exportByJson(query);
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', 'attachment; filename=<%= tableName%>.json');
+      res.send(json);
+    }
+  
+    @Post('exportByXml')
+    @ApiOperation({ summary: '导出XML' })
+    async exportByXml(@Body() query: QueryCondition, @Res() res: Response) {
+      const xml = await this.<%= tableName%>Service.exportByXml(query);
+      res.setHeader('Content-Type', 'application/xml');
+      res.setHeader('Content-Disposition', 'attachment; filename=<%= tableName%>.xml');
+      res.send(xml);
+    }
+  
+    @Post('insert<%= TableName %>')
+    @ApiOperation({ summary: '增加<%= tableComment %>' })
+    insert<%= TableName %>(@Body() entity: <%= TableName %>) {
+      return this.<%= tableName%>Service.insert(entity);
+    }
+  
+    @Post('insert<%= TableName %>Batch')
+    @ApiOperation({ summary: '增加<%= tableComment %>(批量)' })
+    insert<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
+      return this.<%= tableName%>Service.insertBatch(entity);
+    }
+  
+    @Post('query<%= TableName %>')
+    @ApiOperation({ summary: '查询<%= tableComment %>列表结果' })
+    query<%= TableName %>(@Body() condition:QueryCondition) {
+      return this.<%= tableName%>Service.queryList(condition)
+    }
+  
+    @Post('save<%= TableName %>')
+    @ApiOperation({ summary: '保存<%= tableComment %>' })
+    save<%= TableName %>(@Body() entity: <%= TableName %>) {
+      if(!entity.<%= primaryKey %>){
+        entity.<%= primaryKey %> = nanoid()
+      }
+      return this.<%= tableName%>Service.save(entity);
+    }
+  
+    @Post('save<%= TableName %>Batch')
+    @ApiOperation({ summary: '保存<%= tableComment %>(批量)' })
+    save<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
+      entity.forEach(entityItem=>{
+        if(!entityItem.<%= primaryKey %>){
+          entityItem.<%= primaryKey %> = nanoid()
+        }
+      })
+      return this.<%= tableName%>Service.saveBatch(entity);
+    }
+  
+    @Post('update<%= TableName %>')
+    @ApiOperation({ summary: '修改<%= tableComment %>' })
+    update<%= TableName %>(@Body() entity: <%= TableName %>) {
+      return this.<%= tableName%>Service.update(entity);
+    }
+  
+    @Post('update<%= TableName %>Batch')
+    @ApiOperation({ summary: '修改<%= tableComment %>(批量)' })
+    update<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
+      return this.<%= tableName%>Service.updateBatch(entity);
+    }
+  }
+  
