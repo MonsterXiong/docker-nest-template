@@ -16,13 +16,19 @@ export class TransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Response<T>> {
+    const ctx = context.switchToHttp()
+    const response = ctx.getResponse()
     return next.handle().pipe(
-      map(data => ({
+      map(data => {
+        response.status(200)
+       return {
+        statusCode:200,
         code: 200,
         data,
         message: '请求成功',
         timestamp: new Date().toISOString(),
-      })),
+       }
+      }),
     );
   }
 } 

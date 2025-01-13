@@ -16,19 +16,19 @@ import {
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
   import { nanoid } from "nanoid";
   
-  @ApiTags('菜单详情接口')
+  @ApiTags('接口')
   @Controller('/api/dpMenuDetail')
   export class DpMenuDetailController {
     constructor(private readonly dpMenuDetailService: DpMenuDetailService) {}
   
     @Post('deleteDpMenuDetailBatch')
-    @ApiOperation({ summary: '删除菜单详情(批量、递归)' })
+    @ApiOperation({ summary: '删除(批量、递归)' })
     deleteDpMenuDetailBatch(@Body() idList: string[]) {
       return this.dpMenuDetailService.deleteBatch(idList);
     }
   
     @Post('downloadDpMenuDetailTemplate')
-    @ApiOperation({ summary: '导出菜单详情模板下载' })
+    @ApiOperation({ summary: '导出模板下载' })
     async downloadDpMenuDetailTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.dpMenuDetailService.downloadDpMenuDetailTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -37,13 +37,13 @@ import {
     }
   
     @Post('getDpMenuDetail')
-    @ApiOperation({ summary: '获取菜单详情' })
+    @ApiOperation({ summary: '获取' })
     getDpMenuDetail(@Query('id') id: string) {
       return this.dpMenuDetailService.getItem(id);
     }
   
     @Post('importDpMenuDetailByExcel')
-    @ApiOperation({ summary: '导入菜单详情' })
+    @ApiOperation({ summary: '导入' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
@@ -104,25 +104,25 @@ import {
     }
   
     @Post('insertDpMenuDetail')
-    @ApiOperation({ summary: '增加菜单详情' })
+    @ApiOperation({ summary: '增加' })
     insertDpMenuDetail(@Body() entity: DpMenuDetail) {
       return this.dpMenuDetailService.insert(entity);
     }
   
     @Post('insertDpMenuDetailBatch')
-    @ApiOperation({ summary: '增加菜单详情(批量)' })
+    @ApiOperation({ summary: '增加(批量)' })
     insertDpMenuDetailBatch(@Body() entity: DpMenuDetail[]) {
       return this.dpMenuDetailService.insertBatch(entity);
     }
   
     @Post('queryDpMenuDetail')
-    @ApiOperation({ summary: '查询菜单详情列表结果' })
+    @ApiOperation({ summary: '查询列表结果' })
     queryDpMenuDetail(@Body() condition:QueryCondition) {
       return this.dpMenuDetailService.queryList(condition)
     }
   
     @Post('saveDpMenuDetail')
-    @ApiOperation({ summary: '保存菜单详情' })
+    @ApiOperation({ summary: '保存' })
     saveDpMenuDetail(@Body() entity: DpMenuDetail) {
       if(!entity.id){
         entity.id = nanoid()
@@ -131,7 +131,7 @@ import {
     }
   
     @Post('saveDpMenuDetailBatch')
-    @ApiOperation({ summary: '保存菜单详情(批量)' })
+    @ApiOperation({ summary: '保存(批量)' })
     saveDpMenuDetailBatch(@Body() entity: DpMenuDetail[]) {
       entity.forEach(entityItem=>{
         if(!entityItem.id){
@@ -142,13 +142,13 @@ import {
     }
   
     @Post('updateDpMenuDetail')
-    @ApiOperation({ summary: '修改菜单详情' })
+    @ApiOperation({ summary: '修改' })
     updateDpMenuDetail(@Body() entity: DpMenuDetail) {
       return this.dpMenuDetailService.update(entity);
     }
   
     @Post('updateDpMenuDetailBatch')
-    @ApiOperation({ summary: '修改菜单详情(批量)' })
+    @ApiOperation({ summary: '修改(批量)' })
     updateDpMenuDetailBatch(@Body() entity: DpMenuDetail[]) {
       return this.dpMenuDetailService.updateBatch(entity);
     }

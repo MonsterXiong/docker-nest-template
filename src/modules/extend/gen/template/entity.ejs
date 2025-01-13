@@ -3,49 +3,19 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
 
 @Entity()
-export class <%=TableName %>{
-  <% fields %>
-<% fields.forEach(function(field){ %>
+export class <%=TableName %> extends CommonEntity {
+<%_ fields.filter(field=>!field.columnOptions.Field.startsWith('sys_')).forEach(function(field){ -%>
   @ApiProperty({
     description: '<%=field.comment %>'
   })
   <%_if (field.isPrimary) { -%>
   @PrimaryColumn({
-    name:'<%=field.columnOptions.Field %>',
-    comment: '主键',
-    <%_if (field.length) { -%>
-      <%_if( field.type !='number'){-%>
-    length: <%=field.length %>,
-      <%_ }else{-%>
-    width: <%=field.length %>,
-      <%_ }-%>
-    <%_ }-%>
-  })
-  <%_ }else if(field.columnName == 'updateDate'){ -%>
-  @UpdateDateColumn({
-    type: 'timestamp',
-    name:'<%=field.columnOptions.Field %>',
-    comment: '<%=field.comment %>',
-  })
-  <%_ }else if(field.columnName == 'createdDate'){ -%>
-  @CreateDateColumn({
-    type: 'timestamp',
-    name:'<%=field.columnOptions.Field %>',
-    comment: '<%=field.comment %>',
-  })
-  <%_ }else if(field.columnName == 'deleteDate'){ -%>
-  @DeleteDateColumn({
-    type: 'timestamp',
-    name:'<%=field.columnOptions.Field %>',
-    comment: '<%=field.comment %>',
-  })
   <%_ }else{ -%>
   @Column({
+  <%_ } -%>
     name:'<%=field.columnOptions.Field %>',
     nullable: <%=field.nullable %>,
-    <%_if (field.type == 'Date') { -%>
-    type: 'timestamp',
-    <%_ }-%>
+    type: '<%=field.sourceType %>',
     comment: '<%=field.comment %>',
     <%_if (field.default != null) { -%>
     default: <%_if(['boolean','number'].includes(field.type)){-%><%=field.default %><%_ }else{-%>'<%=field.default %>'<%_ } -%>,
@@ -58,7 +28,6 @@ export class <%=TableName %>{
       <%_ }-%>
     <%_ }-%>
   })
-  <%_ } -%>
   <%=field.columnName %>: <%=field.type %>
 <% }); %>
 }

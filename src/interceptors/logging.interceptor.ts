@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Log } from '../modules/log/log.entity'; 
+import { SLog } from 'src/modules/system/sLog'
 import { Logger } from 'winston';
 import { Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -17,8 +17,8 @@ import { nanoid } from 'nanoid';
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   constructor(
-    @InjectRepository(Log)
-    private readonly logRepository: Repository<Log>,
+    @InjectRepository(SLog)
+    private readonly logRepository: Repository<SLog>,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -29,7 +29,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(async (data) => {
-        const log = new Log();
+        const log = new SLog();
         log.id = nanoid()
         log.sysCreateIp = this.getClientIp(request);
         log.method = request.method;

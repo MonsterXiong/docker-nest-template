@@ -16,19 +16,19 @@ import {
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
   import { nanoid } from "nanoid";
   
-  @ApiTags('分类类型接口')
+  @ApiTags('接口')
   @Controller('/api/sCategoryType')
   export class SCategoryTypeController {
     constructor(private readonly sCategoryTypeService: SCategoryTypeService) {}
   
     @Post('deleteSCategoryTypeBatch')
-    @ApiOperation({ summary: '删除分类类型(批量、递归)' })
+    @ApiOperation({ summary: '删除(批量、递归)' })
     deleteSCategoryTypeBatch(@Body() idList: string[]) {
       return this.sCategoryTypeService.deleteBatch(idList);
     }
   
     @Post('downloadSCategoryTypeTemplate')
-    @ApiOperation({ summary: '导出分类类型模板下载' })
+    @ApiOperation({ summary: '导出模板下载' })
     async downloadSCategoryTypeTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.sCategoryTypeService.downloadSCategoryTypeTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -37,13 +37,13 @@ import {
     }
   
     @Post('getSCategoryType')
-    @ApiOperation({ summary: '获取分类类型' })
+    @ApiOperation({ summary: '获取' })
     getSCategoryType(@Query('id') id: string) {
       return this.sCategoryTypeService.getItem(id);
     }
   
     @Post('importSCategoryTypeByExcel')
-    @ApiOperation({ summary: '导入分类类型' })
+    @ApiOperation({ summary: '导入' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
@@ -104,25 +104,25 @@ import {
     }
   
     @Post('insertSCategoryType')
-    @ApiOperation({ summary: '增加分类类型' })
+    @ApiOperation({ summary: '增加' })
     insertSCategoryType(@Body() entity: SCategoryType) {
       return this.sCategoryTypeService.insert(entity);
     }
   
     @Post('insertSCategoryTypeBatch')
-    @ApiOperation({ summary: '增加分类类型(批量)' })
+    @ApiOperation({ summary: '增加(批量)' })
     insertSCategoryTypeBatch(@Body() entity: SCategoryType[]) {
       return this.sCategoryTypeService.insertBatch(entity);
     }
   
     @Post('querySCategoryType')
-    @ApiOperation({ summary: '查询分类类型列表结果' })
+    @ApiOperation({ summary: '查询列表结果' })
     querySCategoryType(@Body() condition:QueryCondition) {
       return this.sCategoryTypeService.queryList(condition)
     }
   
     @Post('saveSCategoryType')
-    @ApiOperation({ summary: '保存分类类型' })
+    @ApiOperation({ summary: '保存' })
     saveSCategoryType(@Body() entity: SCategoryType) {
       if(!entity.id){
         entity.id = nanoid()
@@ -131,7 +131,7 @@ import {
     }
   
     @Post('saveSCategoryTypeBatch')
-    @ApiOperation({ summary: '保存分类类型(批量)' })
+    @ApiOperation({ summary: '保存(批量)' })
     saveSCategoryTypeBatch(@Body() entity: SCategoryType[]) {
       entity.forEach(entityItem=>{
         if(!entityItem.id){
@@ -142,13 +142,13 @@ import {
     }
   
     @Post('updateSCategoryType')
-    @ApiOperation({ summary: '修改分类类型' })
+    @ApiOperation({ summary: '修改' })
     updateSCategoryType(@Body() entity: SCategoryType) {
       return this.sCategoryTypeService.update(entity);
     }
   
     @Post('updateSCategoryTypeBatch')
-    @ApiOperation({ summary: '修改分类类型(批量)' })
+    @ApiOperation({ summary: '修改(批量)' })
     updateSCategoryTypeBatch(@Body() entity: SCategoryType[]) {
       return this.sCategoryTypeService.updateBatch(entity);
     }

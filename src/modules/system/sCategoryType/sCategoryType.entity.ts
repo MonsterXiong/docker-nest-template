@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
 
 @Entity()
-export class DpMenuDetail extends CommonEntity {
+export class SCategoryType extends CommonEntity {
   @ApiProperty({
     description: '主键'
   })
@@ -38,28 +38,6 @@ export class DpMenuDetail extends CommonEntity {
   })
   fullName: string
   @ApiProperty({
-    description: '英文名称'
-  })
-  @Column({
-    name:'english_name',
-    nullable: true,
-    type: 'varchar',
-    comment: '英文名称',
-    length: 50,
-  })
-  englishName: string
-  @ApiProperty({
-    description: '同步项目id'
-  })
-  @Column({
-    name:'sync_id',
-    nullable: true,
-    type: 'varchar',
-    comment: '同步项目id',
-    length: 32,
-  })
-  syncId: string
-  @ApiProperty({
     description: '标识'
   })
   @Column({
@@ -82,15 +60,15 @@ export class DpMenuDetail extends CommonEntity {
   })
   description: string
   @ApiProperty({
-    description: '配置'
+    description: '父级ID'
   })
   @Column({
-    name:'config_param',
+    name:'parent_id',
     nullable: true,
     type: 'varchar',
-    comment: '配置',
-    length: 255,
+    comment: '父级ID',
+    length: 32,
   })
-  configParam: string
+  parentId: string
 
 }

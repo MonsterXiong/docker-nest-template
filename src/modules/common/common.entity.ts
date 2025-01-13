@@ -8,7 +8,9 @@ export class CommonEntity {
   @Column({
     name:'sys_remark',
     nullable: true,
-    comment: '备注'
+    type: 'varchar',
+    comment: '备注',
+    length: 255,
   })
   sysRemark: string
 
@@ -18,19 +20,21 @@ export class CommonEntity {
   @Column({
     name:'sys_sort',
     nullable: true,
-    comment: '排序'
+    type: 'int',
+    comment: '排序',
+    width: 10,
   })
   sysSort: number
 
-  @ApiProperty({
-    description: '状态'
-  })
-  @Column({
-    name:'sys_is_active',
-    nullable: true,
-    comment: '状态'
-  })
-  sysIsActive: string
+  // @ApiProperty({
+  //   description: '状态'
+  // })
+  // @Column({
+  //   name:'sys_is_active',
+  //   nullable: true,
+  //   comment: '状态'
+  // })
+  // sysIsActive: string
 
   @ApiProperty({
     description: '是否删除'
@@ -38,8 +42,10 @@ export class CommonEntity {
   @Column({
     name:'sys_is_del',
     nullable: true,
+    type: 'varchar',
     comment: '是否删除',
-    default: '0'
+    default:'0',
+    length: 1,
   })
   sysIsDel: string
 
@@ -49,7 +55,9 @@ export class CommonEntity {
   @Column({
     name:'sys_creator',
     nullable: true,
-    comment: '创建人'
+    type: 'varchar',
+    comment: '创建人',
+    length: 32,
   })
   sysCreator: string
 
@@ -59,7 +67,9 @@ export class CommonEntity {
   @Column({
     name:'sys_create_time',
     nullable: true,
-    comment: '创建时间'
+    type: 'varchar',
+    comment: '创建时间',
+    length: 32,
   })
   sysCreateTime: string
 
@@ -69,7 +79,9 @@ export class CommonEntity {
   @Column({
     name:'sys_create_ip',
     nullable: true,
-    comment: '创建ip'
+    type: 'varchar',
+    comment: '创建ip',
+    length: 32,
   })
   sysCreateIp: string
 
@@ -79,7 +91,9 @@ export class CommonEntity {
   @Column({
     name:'sys_updater',
     nullable: true,
-    comment: '修改人'
+    type: 'varchar',
+    comment: '修改人',
+    length: 32,
   })
   sysUpdater: string
 
@@ -89,7 +103,9 @@ export class CommonEntity {
   @Column({
     name:'sys_update_time',
     nullable: true,
-    comment: '修改时间'
+    type: 'varchar',
+    comment: '修改时间',
+    length: 32,
   })
   sysUpdateTime: string
 
@@ -99,8 +115,9 @@ export class CommonEntity {
   @Column({
     name:'sys_update_ip',
     nullable: true,
-    comment: '修改ip'
+    type: 'varchar',
+    comment: '修改ip',
+    length: 32,
   })
   sysUpdateIp: string
-
 } 

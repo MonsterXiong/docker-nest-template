@@ -129,6 +129,28 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
+  async getNoSysTableList(config: DatabaseConfigDto): Promise<TableSchemaDto[]> {
+    return this.executeQuery(config, async (connection) => {
+      const tables = (await this.queryTableBaseInfo(connection, config.database)).filter(item=>!item.tableName.startsWith('s_'));
+      return Promise.all(
+        tables.map(table => 
+          this.getTableStructure(connection, config.database, table.tableName)
+        )
+      );
+    });
+  }
+
+  async getSysTableList(config: DatabaseConfigDto): Promise<TableSchemaDto[]> {
+    return this.executeQuery(config, async (connection) => {
+      const tables = (await this.queryTableBaseInfo(connection, config.database)).filter(item=>item.tableName.startsWith('s_'));
+      return Promise.all(
+        tables.map(table => 
+          this.getTableStructure(connection, config.database, table.tableName)
+        )
+      );
+    });
+  }
+
   async getTable(config: DatabaseConfigDto, tableName: string): Promise<TableSchemaDto> {
     return this.executeQuery(config, (connection) =>
       this.getTableStructure(connection, config.database, tableName)

@@ -12,23 +12,4 @@ export class NavExtendController {
   async getNavData(): Promise<any> {
     return await this.navExtendService.getNavData();
   }
-
-  @Post('batch-create')
-  @ApiOperation({ summary: '批量创建导航树结构' })
-  @ApiBody({ type: Object })
-  @ApiResponse({ 
-    status: 201,
-    description: '导航树创建成功',
-  })
-  @ApiResponse({ 
-    status: 400,
-    description: '无效的输入数据',
-  })
-  @ApiResponse({ 
-    status: 500,
-    description: '服务器内部错误',
-  })
-  async batchCreateNavTree(@Body() navTree) {
-    return this.navExtendService.batchCreateNavTree(navTree);
-  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getMetadataArgsStorage, In, Repository } from 'typeorm';
-import { Log } from "./log.entity";
+import { SLog } from "./sLog.entity";
 import { queryParams } from '../../common/sqlUtil'
 import * as xlsx from 'xlsx';
 import * as xml2js from 'xml2js';
@@ -9,10 +9,10 @@ import { Response } from 'express';
 // import { QueryCondition } from 'src/interfaces/queryCondition.interface';
 import { CommonService } from '../../common/common.service';
 @Injectable()
-export class LogService extends CommonService {
+export class SLogService extends CommonService {
   constructor(
-    @InjectRepository(Log)
-    protected readonly repository: Repository<Log>,
+    @InjectRepository(SLog)
+    protected readonly repository: Repository<SLog>,
   ) { 
     super(repository);
   }
@@ -62,10 +62,10 @@ export class LogService extends CommonService {
   }
 
   // 获取导入模板
-  downloadLogTemplate() {
+  downloadSLogTemplate() {
     // 获取实体的元数据
     const metadata = getMetadataArgsStorage().columns.filter(
-      column => column.target === Log
+      column => column.target === SLog
     );
 
     // 根据元数据创建列定义
@@ -96,19 +96,19 @@ export class LogService extends CommonService {
   async importFromExcel(file: Buffer, req: Request) {
     const wb = xlsx.read(file);
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const data = xlsx.utils.sheet_to_json(ws) as Log[];
+    const data = xlsx.utils.sheet_to_json(ws) as SLog[];
     return this.insertBatch(data);
   }
   async getItem( id: string) {
     return this.findOne( id);
   }
 
-  async insert(entity: Log) {
+  async insert(entity: SLog) {
     const { identifiers } = await this.repository.insert(entity);
     return this.findOne(identifiers[0]. id)
   }
 
-  async insertBatch(entity: Log[]) {
+  async insertBatch(entity: SLog[]) {
     const { identifiers } = await this.repository.createQueryBuilder().insert().values(entity).execute()
     return await this.repository.find({
       where: {
@@ -120,21 +120,21 @@ export class LogService extends CommonService {
   async queryList(params: any) {
     return queryParams(params, this)
   }
-  save(entity: Log) {
+  save(entity: SLog) {
     return this.repository.save(entity);
 
   }
-  saveBatch(entity: Log[]) {
+  saveBatch(entity: SLog[]) {
     return this.repository.save(entity);
   }
 
-  async update(entity: Log) {
+  async update(entity: SLog) {
     const existingData = await this.findOne(entity. id);
-    const mergedLog = this.repository.merge(existingData, entity);
-    this.repository.update(entity. id, mergedLog)
+    const mergedSLog = this.repository.merge(existingData, entity);
+    this.repository.update(entity. id, mergedSLog)
   }
 
-  async updateBatch(entity: Log[]) {
+  async updateBatch(entity: SLog[]) {
     for await (const entityItem of entity) {
       this.update(entityItem)
     }

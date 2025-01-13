@@ -126,8 +126,6 @@ function getCode(params) {
   } else {
     // code+=`.skip(${(pageNumber-1)*pageSize}).take(${pageSize})`
   }
-  console.log(code,'code');
-  
   return code
 }
 

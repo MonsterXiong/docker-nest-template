@@ -8,41 +8,41 @@ import {
     Res,
     Req,
   } from '@nestjs/common';
-  import { NavService } from './nav.service';
+  import { SLogService } from './sLog.service';
   import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
-  import { Nav } from './nav.entity';
+  import { SLog } from './sLog.entity';
   import { FileInterceptor } from '@nestjs/platform-express';
   import { Response } from 'express';
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
   import { nanoid } from "nanoid";
   
   @ApiTags('接口')
-  @Controller('/api/nav')
-  export class NavController {
-    constructor(private readonly navService: NavService) {}
+  @Controller('/api/sLog')
+  export class SLogController {
+    constructor(private readonly sLogService: SLogService) {}
   
-    @Post('deleteNavBatch')
+    @Post('deleteSLogBatch')
     @ApiOperation({ summary: '删除(批量、递归)' })
-    deleteNavBatch(@Body() idList: string[]) {
-      return this.navService.deleteBatch(idList);
+    deleteSLogBatch(@Body() idList: string[]) {
+      return this.sLogService.deleteBatch(idList);
     }
   
-    @Post('downloadNavTemplate')
+    @Post('downloadSLogTemplate')
     @ApiOperation({ summary: '导出模板下载' })
-    async downloadNavTemplate(@Res() res: Response): Promise<void> {
-      const buffer = this.navService.downloadNavTemplate();
+    async downloadSLogTemplate(@Res() res: Response): Promise<void> {
+      const buffer = this.sLogService.downloadSLogTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
       res.send(buffer);
     }
   
-    @Post('getNav')
+    @Post('getSLog')
     @ApiOperation({ summary: '获取' })
-    getNav(@Query('id') id: string) {
-      return this.navService.getItem(id);
+    getSLog(@Query('id') id: string) {
+      return this.sLogService.getItem(id);
     }
   
-    @Post('importNavByExcel')
+    @Post('importSLogByExcel')
     @ApiOperation({ summary: '导入' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
@@ -69,88 +69,88 @@ import {
         },
       },
     })
-    importNav(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+    importSLog(@UploadedFile() file: Express.Multer.File, @Req() req: Request) {
       if (!file) {
         throw new Error('请选择要导入的文件');
       }
-      return this.navService.importFromExcel(file.buffer, req);
+      return this.sLogService.importFromExcel(file.buffer, req);
     }
   
     @Post('exportByExcel')
     @ApiOperation({ summary: '导出Excel' })
     async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
-      const buffer = await this.navService.exportByExcel(query,res);
+      const buffer = await this.sLogService.exportByExcel(query,res);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=nav.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=sLog.xlsx');
       res.send(buffer);
     }
   
     @Post('exportByJson')
     @ApiOperation({ summary: '导出JSON' })
     async exportByJson(@Body() query: QueryCondition, @Res() res: Response) {
-      const json = await this.navService.exportByJson(query);
+      const json = await this.sLogService.exportByJson(query);
       res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Content-Disposition', 'attachment; filename=nav.json');
+      res.setHeader('Content-Disposition', 'attachment; filename=sLog.json');
       res.send(json);
     }
   
     @Post('exportByXml')
     @ApiOperation({ summary: '导出XML' })
     async exportByXml(@Body() query: QueryCondition, @Res() res: Response) {
-      const xml = await this.navService.exportByXml(query);
+      const xml = await this.sLogService.exportByXml(query);
       res.setHeader('Content-Type', 'application/xml');
-      res.setHeader('Content-Disposition', 'attachment; filename=nav.xml');
+      res.setHeader('Content-Disposition', 'attachment; filename=sLog.xml');
       res.send(xml);
     }
   
-    @Post('insertNav')
+    @Post('insertSLog')
     @ApiOperation({ summary: '增加' })
-    insertNav(@Body() entity: Nav) {
-      return this.navService.insert(entity);
+    insertSLog(@Body() entity: SLog) {
+      return this.sLogService.insert(entity);
     }
   
-    @Post('insertNavBatch')
+    @Post('insertSLogBatch')
     @ApiOperation({ summary: '增加(批量)' })
-    insertNavBatch(@Body() entity: Nav[]) {
-      return this.navService.insertBatch(entity);
+    insertSLogBatch(@Body() entity: SLog[]) {
+      return this.sLogService.insertBatch(entity);
     }
   
-    @Post('queryNav')
+    @Post('querySLog')
     @ApiOperation({ summary: '查询列表结果' })
-    queryNav(@Body() condition:QueryCondition) {
-      return this.navService.queryList(condition)
+    querySLog(@Body() condition:QueryCondition) {
+      return this.sLogService.queryList(condition)
     }
   
-    @Post('saveNav')
+    @Post('saveSLog')
     @ApiOperation({ summary: '保存' })
-    saveNav(@Body() entity: Nav) {
+    saveSLog(@Body() entity: SLog) {
       if(!entity.id){
         entity.id = nanoid()
       }
-      return this.navService.save(entity);
+      return this.sLogService.save(entity);
     }
   
-    @Post('saveNavBatch')
+    @Post('saveSLogBatch')
     @ApiOperation({ summary: '保存(批量)' })
-    saveNavBatch(@Body() entity: Nav[]) {
+    saveSLogBatch(@Body() entity: SLog[]) {
       entity.forEach(entityItem=>{
         if(!entityItem.id){
           entityItem.id = nanoid()
         }
       })
-      return this.navService.saveBatch(entity);
+      return this.sLogService.saveBatch(entity);
     }
   
-    @Post('updateNav')
+    @Post('updateSLog')
     @ApiOperation({ summary: '修改' })
-    updateNav(@Body() entity: Nav) {
-      return this.navService.update(entity);
+    updateSLog(@Body() entity: SLog) {
+      return this.sLogService.update(entity);
     }
   
-    @Post('updateNavBatch')
+    @Post('updateSLogBatch')
     @ApiOperation({ summary: '修改(批量)' })
-    updateNavBatch(@Body() entity: Nav[]) {
-      return this.navService.updateBatch(entity);
+    updateSLogBatch(@Body() entity: SLog[]) {
+      return this.sLogService.updateBatch(entity);
     }
   }
   

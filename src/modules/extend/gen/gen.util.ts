@@ -20,6 +20,7 @@ export interface EjsTemplateData {
   fields: Array<{
     columnName:string,
     type,
+    sourceType:string,
     length,
     nullable: boolean,
     isPrimary: boolean,
@@ -31,17 +32,18 @@ export interface EjsTemplateData {
 
 export class GenUtil {
   constructor(){}
-  private static parseColumnType(fullType: string): { type: string; length?: number; precision?: number; scale?: number } {
+  private static parseColumnType(fullType: string): { type: string; length?: number;sourceType:string, precision?: number; scale?: number } {
     const match = fullType.match(/^(\w+)(?:\(([^)]+)\))?/);
-    if (!match) return { type: fullType };
+    if (!match) return { type: fullType,sourceType: fullType };
 
-    const type = match[1].toLowerCase();
-    if (!match[2]) return { type: this.mapDbTypeToTsType(type) };
+    const sourceType = match[1].toLowerCase();
+    if (!match[2]) return { type: this.mapDbTypeToTsType(sourceType),sourceType };
 
     // 处理不同类型的参数
     const params = match[2].split(',').map(p => p.trim());
-    if (type.includes('decimal') || type.includes('numeric')) {
+    if (sourceType.includes('decimal') || sourceType.includes('numeric')) {
       return {
+        sourceType,
         type: 'number',
         precision: parseInt(params[0]), 
         scale: params[1] ? parseInt(params[1]) : 0
@@ -49,7 +51,8 @@ export class GenUtil {
     }
     
     return {
-      type: this.mapDbTypeToTsType(type),
+      sourceType,
+      type: this.mapDbTypeToTsType(sourceType),
       length: parseInt(params[0])
     };
   }
@@ -174,9 +177,10 @@ export class GenUtil {
       ApiPrefix: 'api',
       primaryKey: primaryKeyField ? camelCase(primaryKeyField.Field) : 'id',
       fields: tableInfo.columns?.map(col => {
-        const {type, length} = this.parseColumnType(col.Type);
+        const {type, length,sourceType} = this.parseColumnType(col.Type);
         return {
           columnName:camelCase(col.Field),
+          sourceType,
           type,
           length,
           nullable: col.Null == 'YES',
