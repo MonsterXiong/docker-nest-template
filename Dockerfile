@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # 安装 PM2 全局
-RUN npm install -g pm2
+RUN npm install -g pm2 --registry=https://registry.npmmirror.com
 
 # 安装项目依赖
 RUN npm install --production
@@ -20,11 +20,11 @@ COPY . .
 RUN npm run build
 
 # 设置默认环境变量
-ENV DATABASE_HOST=localhost \
-    DATABASE_PORT=3306 \
-    DATABASE_USER=root \
-    DATABASE_PASSWORD=123456 \
-    DATABASE_NAME=test
+ENV DB_HOST=localhost \
+    DB_PORT=3306 \
+    DB_USER=root \
+    DB_PASSWORD=123456 \
+    DB_NAME=test
 
 # 暴露应用端口
 EXPOSE 3000
