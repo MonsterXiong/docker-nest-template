@@ -14,36 +14,41 @@ import {
   import { FileInterceptor } from '@nestjs/platform-express';
   import { Response } from 'express';
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
-  import { nanoid } from "nanoid";
   
-  @ApiTags('接口')
+  @ApiTags('导航接口')
   @Controller('/api/nav')
   export class NavController {
     constructor(private readonly navService: NavService) {}
   
+    @Post('deleteNav')
+    @ApiOperation({ summary: '删除导航' })
+    deleteNav(@Query('id') id: string,@Req() req: Request) {
+      return this.navService.delete(id,req);
+    }
+
     @Post('deleteNavBatch')
-    @ApiOperation({ summary: '删除(批量、递归)' })
-    deleteNavBatch(@Body() idList: string[]) {
-      return this.navService.deleteBatch(idList);
+    @ApiOperation({ summary: '删除导航(批量)' })
+    deleteNavBatch(@Body() idList: string[],@Req() req: Request) {
+      return this.navService.deleteBatch(idList,req);
     }
   
     @Post('downloadNavTemplate')
-    @ApiOperation({ summary: '导出模板下载' })
+    @ApiOperation({ summary: '导出导航模板下载' })
     async downloadNavTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.navService.downloadNavTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=导航模板.xlsx');
       res.send(buffer);
     }
   
     @Post('getNav')
-    @ApiOperation({ summary: '获取' })
+    @ApiOperation({ summary: '获取导航' })
     getNav(@Query('id') id: string) {
       return this.navService.getItem(id);
     }
   
     @Post('importNavByExcel')
-    @ApiOperation({ summary: '导入' })
+    @ApiOperation({ summary: '导入导航' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
@@ -79,7 +84,7 @@ import {
     @Post('exportByExcel')
     @ApiOperation({ summary: '导出Excel' })
     async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
-      const buffer = await this.navService.exportByExcel(query,res);
+      const buffer = await this.navService.exportByExcel(query);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=nav.xlsx');
       res.send(buffer);
@@ -104,53 +109,45 @@ import {
     }
   
     @Post('insertNav')
-    @ApiOperation({ summary: '增加' })
-    insertNav(@Body() entity: Nav) {
-      return this.navService.insert(entity);
+    @ApiOperation({ summary: '增加导航' })
+    insertNav(@Body() entity: Nav,@Req() req: Request) {
+      return this.navService.insert(entity,req);
     }
   
     @Post('insertNavBatch')
-    @ApiOperation({ summary: '增加(批量)' })
-    insertNavBatch(@Body() entity: Nav[]) {
-      return this.navService.insertBatch(entity);
+    @ApiOperation({ summary: '增加导航(批量)' })
+    insertNavBatch(@Body() entity: Nav[],@Req() req: Request) {
+      return this.navService.insertBatch(entity,req);
     }
   
-    @Post('queryNav')
-    @ApiOperation({ summary: '查询列表结果' })
+    @Post('queryNavDtoByCondition')
+    @ApiOperation({ summary: '查询导航列表结果' })
     queryNav(@Body() condition:QueryCondition) {
       return this.navService.queryList(condition)
     }
   
     @Post('saveNav')
-    @ApiOperation({ summary: '保存' })
-    saveNav(@Body() entity: Nav) {
-      if(!entity.id){
-        entity.id = nanoid()
-      }
-      return this.navService.save(entity);
+    @ApiOperation({ summary: '保存导航' })
+    saveNav(@Body() entity: Nav,@Req() req: Request) {
+      return this.navService.save(entity,req);
     }
   
     @Post('saveNavBatch')
-    @ApiOperation({ summary: '保存(批量)' })
-    saveNavBatch(@Body() entity: Nav[]) {
-      entity.forEach(entityItem=>{
-        if(!entityItem.id){
-          entityItem.id = nanoid()
-        }
-      })
-      return this.navService.saveBatch(entity);
+    @ApiOperation({ summary: '保存导航(批量)' })
+    saveNavBatch(@Body() entity: Nav[],@Req() req: Request) {
+      return this.navService.saveBatch(entity,req); 
     }
   
     @Post('updateNav')
-    @ApiOperation({ summary: '修改' })
-    updateNav(@Body() entity: Nav) {
-      return this.navService.update(entity);
+    @ApiOperation({ summary: '修改导航' })
+    updateNav(@Body() entity: Nav,@Req() req: Request) {
+      return this.navService.update(entity,req);
     }
   
     @Post('updateNavBatch')
-    @ApiOperation({ summary: '修改(批量)' })
-    updateNavBatch(@Body() entity: Nav[]) {
-      return this.navService.updateBatch(entity);
+    @ApiOperation({ summary: '修改导航(批量)' })
+    updateNavBatch(@Body() entity: Nav[],@Req() req: Request) {
+        return this.navService.updateBatch(entity,req);
     }
   }
   

@@ -1,11 +1,17 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm' ;
+import { Column, Entity,PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm' ;
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
+import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 
-@Entity()
+@Entity({
+  comment: '模板'
+})
 export class DpTemplate extends CommonEntity {
+
   @ApiProperty({
-    description: '主键'
+    description: '主键',
+    example: ""
   })
   @PrimaryColumn({
     name:'id',
@@ -15,8 +21,10 @@ export class DpTemplate extends CommonEntity {
     length: 32,
   })
   id: string
+
   @ApiProperty({
-    description: '名称'
+    description: '名称',
+    example: ""
   })
   @Column({
     name:'name',
@@ -26,8 +34,10 @@ export class DpTemplate extends CommonEntity {
     length: 50,
   })
   name: string
+
   @ApiProperty({
-    description: '全称'
+    description: '全称',
+    example: ""
   })
   @Column({
     name:'full_name',
@@ -37,8 +47,10 @@ export class DpTemplate extends CommonEntity {
     length: 50,
   })
   fullName: string
+
   @ApiProperty({
-    description: '标识'
+    description: '标识',
+    example: ""
   })
   @Column({
     name:'code',
@@ -48,8 +60,10 @@ export class DpTemplate extends CommonEntity {
     length: 32,
   })
   code: string
+
   @ApiProperty({
-    description: '描述'
+    description: '描述',
+    example: ""
   })
   @Column({
     name:'description',
@@ -59,8 +73,10 @@ export class DpTemplate extends CommonEntity {
     length: 255,
   })
   description: string
+
   @ApiProperty({
-    description: '生成类别（前端）'
+    description: '生成类别（前端）',
+    example: ""
   })
   @Column({
     name:'bind_gen',
@@ -70,8 +86,10 @@ export class DpTemplate extends CommonEntity {
     length: 255,
   })
   bindGen: string
+
   @ApiProperty({
-    description: '生成模板类别（前端后端）'
+    description: '生成模板类别（前端后端）',
+    example: ""
   })
   @Column({
     name:'bind_gen_template',
@@ -81,8 +99,10 @@ export class DpTemplate extends CommonEntity {
     length: 255,
   })
   bindGenTemplate: string
+
   @ApiProperty({
-    description: '生成模板类型（前端：页面、配置、路由；后端：接口）'
+    description: '生成模板类型（前端：页面、配置、路由；后端：接口）',
+    example: ""
   })
   @Column({
     name:'bind_gen_template_type',
@@ -92,8 +112,10 @@ export class DpTemplate extends CommonEntity {
     length: 255,
   })
   bindGenTemplateType: string
+
   @ApiProperty({
-    description: '父级ID'
+    description: '父级ID',
+    example: ""
   })
   @Column({
     name:'parent_id',
@@ -103,8 +125,10 @@ export class DpTemplate extends CommonEntity {
     length: 32,
   })
   parentId: string
+
   @ApiProperty({
-    description: '相对路径'
+    description: '相对路径',
+    example: ""
   })
   @Column({
     name:'relative_path',
@@ -114,8 +138,10 @@ export class DpTemplate extends CommonEntity {
     length: 255,
   })
   relativePath: string
+
   @ApiProperty({
-    description: '模板代码'
+    description: '模板代码',
+    example: ""
   })
   @Column({
     name:'template_code',
@@ -124,8 +150,10 @@ export class DpTemplate extends CommonEntity {
     comment: '模板代码',
   })
   templateCode: string
+
   @ApiProperty({
-    description: '模板算法'
+    description: '模板算法',
+    example: ""
   })
   @Column({
     name:'template_algithorm',
@@ -134,8 +162,10 @@ export class DpTemplate extends CommonEntity {
     comment: '模板算法',
   })
   templateAlgithorm: string
+
   @ApiProperty({
-    description: '模板类型'
+    description: '模板类型',
+    example: ""
   })
   @Column({
     name:'template_ext',
@@ -146,4 +176,18 @@ export class DpTemplate extends CommonEntity {
   })
   templateExt: string
 
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = nanoid()
+    }
+    this.sysCreateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
+
+  @BeforeUpdate()
+  updateTime() {
+    this.sysUpdateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
 }
+

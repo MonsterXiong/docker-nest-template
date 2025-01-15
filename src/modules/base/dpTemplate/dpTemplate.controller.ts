@@ -14,36 +14,41 @@ import {
   import { FileInterceptor } from '@nestjs/platform-express';
   import { Response } from 'express';
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
-  import { nanoid } from "nanoid";
   
-  @ApiTags('接口')
+  @ApiTags('模板接口')
   @Controller('/api/dpTemplate')
   export class DpTemplateController {
     constructor(private readonly dpTemplateService: DpTemplateService) {}
   
+    @Post('deleteDpTemplate')
+    @ApiOperation({ summary: '删除模板' })
+    deleteDpTemplate(@Query('id') id: string,@Req() req: Request) {
+      return this.dpTemplateService.delete(id,req);
+    }
+
     @Post('deleteDpTemplateBatch')
-    @ApiOperation({ summary: '删除(批量、递归)' })
-    deleteDpTemplateBatch(@Body() idList: string[]) {
-      return this.dpTemplateService.deleteBatch(idList);
+    @ApiOperation({ summary: '删除模板(批量)' })
+    deleteDpTemplateBatch(@Body() idList: string[],@Req() req: Request) {
+      return this.dpTemplateService.deleteBatch(idList,req);
     }
   
     @Post('downloadDpTemplateTemplate')
-    @ApiOperation({ summary: '导出模板下载' })
+    @ApiOperation({ summary: '导出模板模板下载' })
     async downloadDpTemplateTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.dpTemplateService.downloadDpTemplateTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=模板模板.xlsx');
       res.send(buffer);
     }
   
     @Post('getDpTemplate')
-    @ApiOperation({ summary: '获取' })
+    @ApiOperation({ summary: '获取模板' })
     getDpTemplate(@Query('id') id: string) {
       return this.dpTemplateService.getItem(id);
     }
   
     @Post('importDpTemplateByExcel')
-    @ApiOperation({ summary: '导入' })
+    @ApiOperation({ summary: '导入模板' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
@@ -79,7 +84,7 @@ import {
     @Post('exportByExcel')
     @ApiOperation({ summary: '导出Excel' })
     async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
-      const buffer = await this.dpTemplateService.exportByExcel(query,res);
+      const buffer = await this.dpTemplateService.exportByExcel(query);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=dpTemplate.xlsx');
       res.send(buffer);
@@ -104,53 +109,45 @@ import {
     }
   
     @Post('insertDpTemplate')
-    @ApiOperation({ summary: '增加' })
-    insertDpTemplate(@Body() entity: DpTemplate) {
-      return this.dpTemplateService.insert(entity);
+    @ApiOperation({ summary: '增加模板' })
+    insertDpTemplate(@Body() entity: DpTemplate,@Req() req: Request) {
+      return this.dpTemplateService.insert(entity,req);
     }
   
     @Post('insertDpTemplateBatch')
-    @ApiOperation({ summary: '增加(批量)' })
-    insertDpTemplateBatch(@Body() entity: DpTemplate[]) {
-      return this.dpTemplateService.insertBatch(entity);
+    @ApiOperation({ summary: '增加模板(批量)' })
+    insertDpTemplateBatch(@Body() entity: DpTemplate[],@Req() req: Request) {
+      return this.dpTemplateService.insertBatch(entity,req);
     }
   
-    @Post('queryDpTemplate')
-    @ApiOperation({ summary: '查询列表结果' })
+    @Post('queryDpTemplateDtoByCondition')
+    @ApiOperation({ summary: '查询模板列表结果' })
     queryDpTemplate(@Body() condition:QueryCondition) {
       return this.dpTemplateService.queryList(condition)
     }
   
     @Post('saveDpTemplate')
-    @ApiOperation({ summary: '保存' })
-    saveDpTemplate(@Body() entity: DpTemplate) {
-      if(!entity.id){
-        entity.id = nanoid()
-      }
-      return this.dpTemplateService.save(entity);
+    @ApiOperation({ summary: '保存模板' })
+    saveDpTemplate(@Body() entity: DpTemplate,@Req() req: Request) {
+      return this.dpTemplateService.save(entity,req);
     }
   
     @Post('saveDpTemplateBatch')
-    @ApiOperation({ summary: '保存(批量)' })
-    saveDpTemplateBatch(@Body() entity: DpTemplate[]) {
-      entity.forEach(entityItem=>{
-        if(!entityItem.id){
-          entityItem.id = nanoid()
-        }
-      })
-      return this.dpTemplateService.saveBatch(entity);
+    @ApiOperation({ summary: '保存模板(批量)' })
+    saveDpTemplateBatch(@Body() entity: DpTemplate[],@Req() req: Request) {
+      return this.dpTemplateService.saveBatch(entity,req); 
     }
   
     @Post('updateDpTemplate')
-    @ApiOperation({ summary: '修改' })
-    updateDpTemplate(@Body() entity: DpTemplate) {
-      return this.dpTemplateService.update(entity);
+    @ApiOperation({ summary: '修改模板' })
+    updateDpTemplate(@Body() entity: DpTemplate,@Req() req: Request) {
+      return this.dpTemplateService.update(entity,req);
     }
   
     @Post('updateDpTemplateBatch')
-    @ApiOperation({ summary: '修改(批量)' })
-    updateDpTemplateBatch(@Body() entity: DpTemplate[]) {
-      return this.dpTemplateService.updateBatch(entity);
+    @ApiOperation({ summary: '修改模板(批量)' })
+    updateDpTemplateBatch(@Body() entity: DpTemplate[],@Req() req: Request) {
+        return this.dpTemplateService.updateBatch(entity,req);
     }
   }
   

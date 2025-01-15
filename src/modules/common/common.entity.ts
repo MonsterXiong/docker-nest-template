@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-export class CommonEntity {
-
-  @ApiProperty({
-    description: '备注'
-  })
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+export class CommonEntity  extends BaseEntity {
   @Column({
     name:'sys_remark',
     nullable: true,
@@ -14,9 +10,6 @@ export class CommonEntity {
   })
   sysRemark: string
 
-  @ApiProperty({
-    description: '排序'
-  })
   @Column({
     name:'sys_sort',
     nullable: true,
@@ -36,22 +29,16 @@ export class CommonEntity {
   // })
   // sysIsActive: string
 
-  @ApiProperty({
-    description: '是否删除'
-  })
   @Column({
     name:'sys_is_del',
     nullable: true,
     type: 'varchar',
     comment: '是否删除',
     default:'0',
-    length: 1,
+    length: 4,
   })
   sysIsDel: string
 
-  @ApiProperty({
-    description: '创建人'
-  })
   @Column({
     name:'sys_creator',
     nullable: true,
@@ -61,9 +48,6 @@ export class CommonEntity {
   })
   sysCreator: string
 
-  @ApiProperty({
-    description: '创建时间'
-  })
   @Column({
     name:'sys_create_time',
     nullable: true,
@@ -73,9 +57,6 @@ export class CommonEntity {
   })
   sysCreateTime: string
 
-  @ApiProperty({
-    description: '创建ip'
-  })
   @Column({
     name:'sys_create_ip',
     nullable: true,
@@ -85,9 +66,6 @@ export class CommonEntity {
   })
   sysCreateIp: string
 
-  @ApiProperty({
-    description: '修改人'
-  })
   @Column({
     name:'sys_updater',
     nullable: true,
@@ -97,9 +75,6 @@ export class CommonEntity {
   })
   sysUpdater: string
 
-  @ApiProperty({
-    description: '修改时间'
-  })
   @Column({
     name:'sys_update_time',
     nullable: true,
@@ -109,9 +84,6 @@ export class CommonEntity {
   })
   sysUpdateTime: string
 
-  @ApiProperty({
-    description: '修改ip'
-  })
   @Column({
     name:'sys_update_ip',
     nullable: true,

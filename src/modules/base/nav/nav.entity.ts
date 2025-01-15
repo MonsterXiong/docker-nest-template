@@ -1,11 +1,17 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm' ;
+import { Column, Entity,PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm' ;
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
+import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 
-@Entity()
+@Entity({
+  comment: '导航'
+})
 export class Nav extends CommonEntity {
+
   @ApiProperty({
-    description: '主键'
+    description: '主键',
+    example: ""
   })
   @PrimaryColumn({
     name:'id',
@@ -15,8 +21,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   id: string
+
   @ApiProperty({
-    description: '名称'
+    description: '名称',
+    example: ""
   })
   @Column({
     name:'name',
@@ -26,8 +34,10 @@ export class Nav extends CommonEntity {
     length: 50,
   })
   name: string
+
   @ApiProperty({
-    description: '全称'
+    description: '全称',
+    example: ""
   })
   @Column({
     name:'full_name',
@@ -37,8 +47,10 @@ export class Nav extends CommonEntity {
     length: 50,
   })
   fullName: string
+
   @ApiProperty({
-    description: '标识'
+    description: '标识',
+    example: ""
   })
   @Column({
     name:'code',
@@ -48,8 +60,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   code: string
+
   @ApiProperty({
-    description: '描述'
+    description: '描述',
+    example: ""
   })
   @Column({
     name:'description',
@@ -59,8 +73,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   description: string
+
   @ApiProperty({
-    description: '所属分类'
+    description: '所属分类',
+    example: ""
   })
   @Column({
     name:'bind_nav_category',
@@ -70,8 +86,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   bindNavCategory: string
+
   @ApiProperty({
-    description: '所属单位'
+    description: '所属单位',
+    example: ""
   })
   @Column({
     name:'bind_unit',
@@ -81,30 +99,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   bindUnit: string
+
   @ApiProperty({
-    description: '单位名称'
-  })
-  @Column({
-    name:'unit_name',
-    nullable: false,
-    type: 'varchar',
-    comment: '单位名称',
-    length: 32,
-  })
-  unitName: string
-  @ApiProperty({
-    description: '单位标识'
-  })
-  @Column({
-    name:'unit_code',
-    nullable: false,
-    type: 'varchar',
-    comment: '单位标识',
-    length: 32,
-  })
-  unitCode: string
-  @ApiProperty({
-    description: '所属类型(项目、产品)'
+    description: '所属类型(项目、产品)',
+    example: ""
   })
   @Column({
     name:'bind_nav_type',
@@ -114,8 +112,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   bindNavType: string
+
   @ApiProperty({
-    description: '绑定项目'
+    description: '绑定项目',
+    example: ""
   })
   @Column({
     name:'bind_project',
@@ -125,8 +125,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   bindProject: string
+
   @ApiProperty({
-    description: '预览'
+    description: '预览',
+    example: ""
   })
   @Column({
     name:'url',
@@ -136,8 +138,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   url: string
+
   @ApiProperty({
-    description: 'jenkins链接'
+    description: 'jenkins链接',
+    example: ""
   })
   @Column({
     name:'jenkins_url',
@@ -147,8 +151,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   jenkinsUrl: string
+
   @ApiProperty({
-    description: 'git链接'
+    description: 'git链接',
+    example: ""
   })
   @Column({
     name:'git_url',
@@ -158,8 +164,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   gitUrl: string
+
   @ApiProperty({
-    description: '禅道链接'
+    description: '禅道链接',
+    example: ""
   })
   @Column({
     name:'zentao_url',
@@ -169,8 +177,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   zentaoUrl: string
+
   @ApiProperty({
-    description: '端口'
+    description: '端口',
+    example: ""
   })
   @Column({
     name:'port',
@@ -180,8 +190,10 @@ export class Nav extends CommonEntity {
     width: 10,
   })
   port: number
+
   @ApiProperty({
-    description: '是否演示'
+    description: '是否演示',
+    example: ""
   })
   @Column({
     name:'is_preview',
@@ -192,8 +204,10 @@ export class Nav extends CommonEntity {
     length: 1,
   })
   isPreview: string
+
   @ApiProperty({
-    description: '父级'
+    description: '父级',
+    example: ""
   })
   @Column({
     name:'parent_id',
@@ -203,8 +217,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   parentId: string
+
   @ApiProperty({
-    description: '图标'
+    description: '图标',
+    example: ""
   })
   @Column({
     name:'icon',
@@ -214,8 +230,10 @@ export class Nav extends CommonEntity {
     length: 32,
   })
   icon: string
+
   @ApiProperty({
-    description: '背景图片'
+    description: '背景图片',
+    example: ""
   })
   @Column({
     name:'bg_image',
@@ -225,8 +243,10 @@ export class Nav extends CommonEntity {
     length: 255,
   })
   bgImage: string
+
   @ApiProperty({
-    description: '标签'
+    description: '标签',
+    example: ""
   })
   @Column({
     name:'tag',
@@ -237,4 +257,18 @@ export class Nav extends CommonEntity {
   })
   tag: string
 
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = nanoid()
+    }
+    this.sysCreateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
+
+  @BeforeUpdate()
+  updateTime() {
+    this.sysUpdateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
 }
+

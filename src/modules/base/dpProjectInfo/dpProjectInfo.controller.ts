@@ -14,36 +14,41 @@ import {
   import { FileInterceptor } from '@nestjs/platform-express';
   import { Response } from 'express';
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
-  import { nanoid } from "nanoid";
   
-  @ApiTags('接口')
+  @ApiTags('项目信息接口')
   @Controller('/api/dpProjectInfo')
   export class DpProjectInfoController {
     constructor(private readonly dpProjectInfoService: DpProjectInfoService) {}
   
+    @Post('deleteDpProjectInfo')
+    @ApiOperation({ summary: '删除项目信息' })
+    deleteDpProjectInfo(@Query('id') id: string,@Req() req: Request) {
+      return this.dpProjectInfoService.delete(id,req);
+    }
+
     @Post('deleteDpProjectInfoBatch')
-    @ApiOperation({ summary: '删除(批量、递归)' })
-    deleteDpProjectInfoBatch(@Body() idList: string[]) {
-      return this.dpProjectInfoService.deleteBatch(idList);
+    @ApiOperation({ summary: '删除项目信息(批量)' })
+    deleteDpProjectInfoBatch(@Body() idList: string[],@Req() req: Request) {
+      return this.dpProjectInfoService.deleteBatch(idList,req);
     }
   
     @Post('downloadDpProjectInfoTemplate')
-    @ApiOperation({ summary: '导出模板下载' })
+    @ApiOperation({ summary: '导出项目信息模板下载' })
     async downloadDpProjectInfoTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.dpProjectInfoService.downloadDpProjectInfoTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=项目信息模板.xlsx');
       res.send(buffer);
     }
   
     @Post('getDpProjectInfo')
-    @ApiOperation({ summary: '获取' })
+    @ApiOperation({ summary: '获取项目信息' })
     getDpProjectInfo(@Query('id') id: string) {
       return this.dpProjectInfoService.getItem(id);
     }
   
     @Post('importDpProjectInfoByExcel')
-    @ApiOperation({ summary: '导入' })
+    @ApiOperation({ summary: '导入项目信息' })
     @UseInterceptors(FileInterceptor('file', {
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(xlsx|xls)$/)) {
@@ -79,7 +84,7 @@ import {
     @Post('exportByExcel')
     @ApiOperation({ summary: '导出Excel' })
     async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
-      const buffer = await this.dpProjectInfoService.exportByExcel(query,res);
+      const buffer = await this.dpProjectInfoService.exportByExcel(query);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=dpProjectInfo.xlsx');
       res.send(buffer);
@@ -104,53 +109,45 @@ import {
     }
   
     @Post('insertDpProjectInfo')
-    @ApiOperation({ summary: '增加' })
-    insertDpProjectInfo(@Body() entity: DpProjectInfo) {
-      return this.dpProjectInfoService.insert(entity);
+    @ApiOperation({ summary: '增加项目信息' })
+    insertDpProjectInfo(@Body() entity: DpProjectInfo,@Req() req: Request) {
+      return this.dpProjectInfoService.insert(entity,req);
     }
   
     @Post('insertDpProjectInfoBatch')
-    @ApiOperation({ summary: '增加(批量)' })
-    insertDpProjectInfoBatch(@Body() entity: DpProjectInfo[]) {
-      return this.dpProjectInfoService.insertBatch(entity);
+    @ApiOperation({ summary: '增加项目信息(批量)' })
+    insertDpProjectInfoBatch(@Body() entity: DpProjectInfo[],@Req() req: Request) {
+      return this.dpProjectInfoService.insertBatch(entity,req);
     }
   
-    @Post('queryDpProjectInfo')
-    @ApiOperation({ summary: '查询列表结果' })
+    @Post('queryDpProjectInfoDtoByCondition')
+    @ApiOperation({ summary: '查询项目信息列表结果' })
     queryDpProjectInfo(@Body() condition:QueryCondition) {
       return this.dpProjectInfoService.queryList(condition)
     }
   
     @Post('saveDpProjectInfo')
-    @ApiOperation({ summary: '保存' })
-    saveDpProjectInfo(@Body() entity: DpProjectInfo) {
-      if(!entity.id){
-        entity.id = nanoid()
-      }
-      return this.dpProjectInfoService.save(entity);
+    @ApiOperation({ summary: '保存项目信息' })
+    saveDpProjectInfo(@Body() entity: DpProjectInfo,@Req() req: Request) {
+      return this.dpProjectInfoService.save(entity,req);
     }
   
     @Post('saveDpProjectInfoBatch')
-    @ApiOperation({ summary: '保存(批量)' })
-    saveDpProjectInfoBatch(@Body() entity: DpProjectInfo[]) {
-      entity.forEach(entityItem=>{
-        if(!entityItem.id){
-          entityItem.id = nanoid()
-        }
-      })
-      return this.dpProjectInfoService.saveBatch(entity);
+    @ApiOperation({ summary: '保存项目信息(批量)' })
+    saveDpProjectInfoBatch(@Body() entity: DpProjectInfo[],@Req() req: Request) {
+      return this.dpProjectInfoService.saveBatch(entity,req); 
     }
   
     @Post('updateDpProjectInfo')
-    @ApiOperation({ summary: '修改' })
-    updateDpProjectInfo(@Body() entity: DpProjectInfo) {
-      return this.dpProjectInfoService.update(entity);
+    @ApiOperation({ summary: '修改项目信息' })
+    updateDpProjectInfo(@Body() entity: DpProjectInfo,@Req() req: Request) {
+      return this.dpProjectInfoService.update(entity,req);
     }
   
     @Post('updateDpProjectInfoBatch')
-    @ApiOperation({ summary: '修改(批量)' })
-    updateDpProjectInfoBatch(@Body() entity: DpProjectInfo[]) {
-      return this.dpProjectInfoService.updateBatch(entity);
+    @ApiOperation({ summary: '修改项目信息(批量)' })
+    updateDpProjectInfoBatch(@Body() entity: DpProjectInfo[],@Req() req: Request) {
+        return this.dpProjectInfoService.updateBatch(entity,req);
     }
   }
   

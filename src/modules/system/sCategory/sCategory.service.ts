@@ -8,6 +8,7 @@ import * as xml2js from 'xml2js';
 import { Response } from 'express';
 // import { QueryCondition } from 'src/interfaces/queryCondition.interface';
 import { CommonService } from '../../common/common.service';
+import { nanoid } from 'nanoid';
 @Injectable()
 export class SCategoryService extends CommonService {
   constructor(
@@ -29,7 +30,12 @@ export class SCategoryService extends CommonService {
     return (await this.repository.find()).filter(item => item.sysIsDel == '0')
   }
 
-  async deleteBatch(ids: string[]): Promise<void> {
+  async delete(id: string,req): Promise<void> {
+    const entity = await this.findOne(id)
+    return await this.update({...entity,sysIsDel: null},req)
+  }
+
+  async deleteBatch(ids: string[],req): Promise<void> {
     const dataList = await this.repository.findByIds(ids)
     const delList = dataList.map(item => {
       return {
@@ -37,10 +43,10 @@ export class SCategoryService extends CommonService {
         sysIsDel: null
       }
     })
-    return await this.updateBatch(delList)
+    return await this.updateBatch(delList,req)
   }
 
-  async exportByExcel(query: any, res: Response) {
+  async exportByExcel(query: any) {
     const data = await this.queryList(query);
     const worksheet = xlsx.utils.json_to_sheet(data);
     const workbook = xlsx.utils.book_new();
@@ -65,7 +71,7 @@ export class SCategoryService extends CommonService {
   downloadSCategoryTemplate() {
     // 获取实体的元数据
     const metadata = getMetadataArgsStorage().columns.filter(
-      column => column.target === SCategory
+      column => column.target === SCategory && !column.propertyName.startsWith('sys')
     );
 
     // 根据元数据创建列定义
@@ -97,19 +103,20 @@ export class SCategoryService extends CommonService {
     const wb = xlsx.read(file);
     const ws = wb.Sheets[wb.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(ws) as SCategory[];
-    return this.insertBatch(data);
+    return this.insertBatch(data,req);
   }
   async getItem( id: string) {
     return this.findOne( id);
   }
 
-  async insert(entity: SCategory) {
-    const { identifiers } = await this.repository.insert(entity);
+  async insert(entity: Partial<SCategory>,req) {
+    const { identifiers } = await this.repository.insert(this._createEntity(entity,req));
     return this.findOne(identifiers[0]. id)
   }
 
-  async insertBatch(entity: SCategory[]) {
-    const { identifiers } = await this.repository.createQueryBuilder().insert().values(entity).execute()
+  async insertBatch(entitys: Partial<SCategory>[],req) {
+    const insertData = entitys.map(entity=>this._createEntity(entity,req))
+    const { identifiers } = await this.repository.createQueryBuilder().insert().values(insertData).execute()
     return await this.repository.find({
       where: {
          id: In(identifiers.map(item => item. id))
@@ -120,23 +127,47 @@ export class SCategoryService extends CommonService {
   async queryList(params: any) {
     return queryParams(params, this)
   }
-  save(entity: SCategory) {
-    return this.repository.save(entity);
-
-  }
-  saveBatch(entity: SCategory[]) {
-    return this.repository.save(entity);
-  }
-
-  async update(entity: SCategory) {
-    const existingData = await this.findOne(entity. id);
-    const mergedSCategory = this.repository.merge(existingData, entity);
-    this.repository.update(entity. id, mergedSCategory)
-  }
-
-  async updateBatch(entity: SCategory[]) {
-    for await (const entityItem of entity) {
-      this.update(entityItem)
+  save(entity: Partial<SCategory>,req) {
+    if(entity.id){
+      return this.update(entity,req)
+    }else{
+      return this.insert(entity,req)
     }
+  }
+  async saveBatch(entity: Partial<SCategory>[],req) {
+    for await (const entityItem of entity) {
+      this.save(entityItem,req)
+    }
+  }
+
+  async update(entity: Partial<SCategory>,req) {
+    const existingData = await this.findOne(entity.id);
+    if(!existingData){
+      throw new Error('数据不存在')
+    }
+    const mergeData =this.repository.merge(existingData, entity);
+    this.repository.update(entity.id,this._updateEntity(mergeData,req))
+  }
+
+  async updateBatch(entity: Partial<SCategory>[],req) {
+    for await (const entityItem of entity) {
+      this.update(this._updateEntity(entityItem,req),req)
+    }
+  }
+
+  _createEntity(entity: Partial<SCategory>,req) {
+    const sCategory = new SCategory(); // 创建实体实例
+    if(!entity.id){
+      entity.id = nanoid()
+    }
+    this.setCreateInfo(entity,req)
+    Object.assign(sCategory, entity); // 复制属性
+    return sCategory;
+  }
+  _updateEntity(entity: Partial<SCategory>,req) {
+    const sCategory = new SCategory(); // 创建实体实例
+    this.setUpdateInfo(entity,req)
+    Object.assign(sCategory, entity); // 复制属性
+    return sCategory;
   }
 }

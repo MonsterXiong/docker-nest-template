@@ -14,17 +14,22 @@ import {
   import { FileInterceptor } from '@nestjs/platform-express';
   import { Response } from 'express';
   import { QueryCondition } from 'src/interfaces/queryCondition.interface';
-  import { nanoid } from "nanoid";
   
   @ApiTags('<%= tableComment %>接口')
   @Controller('/<%= ApiPrefix %>/<%= tableName%>')
   export class <%= TableName %>Controller {
     constructor(private readonly <%= tableName%>Service: <%= TableName %>Service) {}
   
+    @Post('delete<%= TableName %>')
+    @ApiOperation({ summary: '删除<%= tableComment %>' })
+    delete<%= TableName %>(@Query('<%= primaryKey %>') <%= primaryKey %>: string,@Req() req: Request) {
+      return this.<%= tableName%>Service.delete(<%= primaryKey %>,req);
+    }
+
     @Post('delete<%= TableName %>Batch')
-    @ApiOperation({ summary: '删除<%= tableComment %>(批量、递归)' })
-    delete<%= TableName %>Batch(@Body() <%= primaryKey %>List: string[]) {
-      return this.<%= tableName%>Service.deleteBatch(<%= primaryKey %>List);
+    @ApiOperation({ summary: '删除<%= tableComment %>(批量)' })
+    delete<%= TableName %>Batch(@Body() <%= primaryKey %>List: string[],@Req() req: Request) {
+      return this.<%= tableName%>Service.deleteBatch(<%= primaryKey %>List,req);
     }
   
     @Post('download<%= TableName %>Template')
@@ -32,7 +37,7 @@ import {
     async download<%= TableName %>Template(@Res() res: Response): Promise<void> {
       const buffer = this.<%= tableName%>Service.download<%= TableName %>Template();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=category_template.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=<%= tableComment %>模板.xlsx');
       res.send(buffer);
     }
   
@@ -79,7 +84,7 @@ import {
     @Post('exportByExcel')
     @ApiOperation({ summary: '导出Excel' })
     async exportByExcel(@Body() query: QueryCondition, @Res() res: Response) {
-      const buffer = await this.<%= tableName%>Service.exportByExcel(query,res);
+      const buffer = await this.<%= tableName%>Service.exportByExcel(query);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=<%= tableName%>.xlsx');
       res.send(buffer);
@@ -105,17 +110,17 @@ import {
   
     @Post('insert<%= TableName %>')
     @ApiOperation({ summary: '增加<%= tableComment %>' })
-    insert<%= TableName %>(@Body() entity: <%= TableName %>) {
-      return this.<%= tableName%>Service.insert(entity);
+    insert<%= TableName %>(@Body() entity: <%= TableName %>,@Req() req: Request) {
+      return this.<%= tableName%>Service.insert(entity,req);
     }
   
     @Post('insert<%= TableName %>Batch')
     @ApiOperation({ summary: '增加<%= tableComment %>(批量)' })
-    insert<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
-      return this.<%= tableName%>Service.insertBatch(entity);
+    insert<%= TableName %>Batch(@Body() entity: <%= TableName %>[],@Req() req: Request) {
+      return this.<%= tableName%>Service.insertBatch(entity,req);
     }
   
-    @Post('query<%= TableName %>')
+    @Post('query<%= TableName %>DtoByCondition')
     @ApiOperation({ summary: '查询<%= tableComment %>列表结果' })
     query<%= TableName %>(@Body() condition:QueryCondition) {
       return this.<%= tableName%>Service.queryList(condition)
@@ -123,34 +128,26 @@ import {
   
     @Post('save<%= TableName %>')
     @ApiOperation({ summary: '保存<%= tableComment %>' })
-    save<%= TableName %>(@Body() entity: <%= TableName %>) {
-      if(!entity.<%= primaryKey %>){
-        entity.<%= primaryKey %> = nanoid()
-      }
-      return this.<%= tableName%>Service.save(entity);
+    save<%= TableName %>(@Body() entity: <%= TableName %>,@Req() req: Request) {
+      return this.<%= tableName%>Service.save(entity,req);
     }
   
     @Post('save<%= TableName %>Batch')
     @ApiOperation({ summary: '保存<%= tableComment %>(批量)' })
-    save<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
-      entity.forEach(entityItem=>{
-        if(!entityItem.<%= primaryKey %>){
-          entityItem.<%= primaryKey %> = nanoid()
-        }
-      })
-      return this.<%= tableName%>Service.saveBatch(entity);
+    save<%= TableName %>Batch(@Body() entity: <%= TableName %>[],@Req() req: Request) {
+      return this.<%= tableName%>Service.saveBatch(entity,req); 
     }
   
     @Post('update<%= TableName %>')
     @ApiOperation({ summary: '修改<%= tableComment %>' })
-    update<%= TableName %>(@Body() entity: <%= TableName %>) {
-      return this.<%= tableName%>Service.update(entity);
+    update<%= TableName %>(@Body() entity: <%= TableName %>,@Req() req: Request) {
+      return this.<%= tableName%>Service.update(entity,req);
     }
   
     @Post('update<%= TableName %>Batch')
     @ApiOperation({ summary: '修改<%= tableComment %>(批量)' })
-    update<%= TableName %>Batch(@Body() entity: <%= TableName %>[]) {
-      return this.<%= tableName%>Service.updateBatch(entity);
+    update<%= TableName %>Batch(@Body() entity: <%= TableName %>[],@Req() req: Request) {
+        return this.<%= tableName%>Service.updateBatch(entity,req);
     }
   }
   

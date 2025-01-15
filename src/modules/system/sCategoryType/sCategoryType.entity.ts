@@ -1,11 +1,17 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm' ;
+import { Column, Entity,PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm' ;
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
+import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 
-@Entity()
+@Entity({
+  comment: '分类类型'
+})
 export class SCategoryType extends CommonEntity {
+
   @ApiProperty({
-    description: '主键'
+    description: '主键',
+    example: ""
   })
   @PrimaryColumn({
     name:'id',
@@ -15,8 +21,10 @@ export class SCategoryType extends CommonEntity {
     length: 32,
   })
   id: string
+
   @ApiProperty({
-    description: '名称'
+    description: '名称',
+    example: ""
   })
   @Column({
     name:'name',
@@ -26,8 +34,10 @@ export class SCategoryType extends CommonEntity {
     length: 50,
   })
   name: string
+
   @ApiProperty({
-    description: '全称'
+    description: '全称',
+    example: ""
   })
   @Column({
     name:'full_name',
@@ -37,8 +47,10 @@ export class SCategoryType extends CommonEntity {
     length: 50,
   })
   fullName: string
+
   @ApiProperty({
-    description: '标识'
+    description: '标识',
+    example: ""
   })
   @Column({
     name:'code',
@@ -48,8 +60,10 @@ export class SCategoryType extends CommonEntity {
     length: 32,
   })
   code: string
+
   @ApiProperty({
-    description: '描述'
+    description: '描述',
+    example: ""
   })
   @Column({
     name:'description',
@@ -59,8 +73,10 @@ export class SCategoryType extends CommonEntity {
     length: 255,
   })
   description: string
+
   @ApiProperty({
-    description: '父级ID'
+    description: '父级ID',
+    example: ""
   })
   @Column({
     name:'parent_id',
@@ -71,4 +87,18 @@ export class SCategoryType extends CommonEntity {
   })
   parentId: string
 
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = nanoid()
+    }
+    this.sysCreateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
+
+  @BeforeUpdate()
+  updateTime() {
+    this.sysUpdateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
 }
+

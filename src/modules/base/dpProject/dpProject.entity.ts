@@ -1,11 +1,17 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm' ;
+import { Column, Entity,PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm' ;
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
+import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 
-@Entity()
+@Entity({
+  comment: '项目'
+})
 export class DpProject extends CommonEntity {
+
   @ApiProperty({
-    description: '主键'
+    description: '主键',
+    example: ""
   })
   @PrimaryColumn({
     name:'id',
@@ -15,8 +21,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   id: string
+
   @ApiProperty({
-    description: '名称'
+    description: '名称',
+    example: ""
   })
   @Column({
     name:'name',
@@ -26,8 +34,10 @@ export class DpProject extends CommonEntity {
     length: 50,
   })
   name: string
+
   @ApiProperty({
-    description: '全称'
+    description: '全称',
+    example: ""
   })
   @Column({
     name:'full_name',
@@ -37,8 +47,10 @@ export class DpProject extends CommonEntity {
     length: 50,
   })
   fullName: string
+
   @ApiProperty({
-    description: '同步项目id'
+    description: '同步项目id',
+    example: ""
   })
   @Column({
     name:'sync_id',
@@ -48,8 +60,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   syncId: string
+
   @ApiProperty({
-    description: '标识'
+    description: '标识',
+    example: ""
   })
   @Column({
     name:'code',
@@ -59,8 +73,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   code: string
+
   @ApiProperty({
-    description: '描述'
+    description: '描述',
+    example: ""
   })
   @Column({
     name:'description',
@@ -70,8 +86,10 @@ export class DpProject extends CommonEntity {
     length: 255,
   })
   description: string
+
   @ApiProperty({
-    description: '所属分类'
+    description: '所属分类',
+    example: ""
   })
   @Column({
     name:'bind_project_type',
@@ -81,8 +99,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   bindProjectType: string
+
   @ApiProperty({
-    description: '所属单位'
+    description: '所属单位',
+    example: ""
   })
   @Column({
     name:'bind_unit',
@@ -92,8 +112,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   bindUnit: string
+
   @ApiProperty({
-    description: '单位名称'
+    description: '单位名称',
+    example: ""
   })
   @Column({
     name:'unit_name',
@@ -103,8 +125,10 @@ export class DpProject extends CommonEntity {
     length: 32,
   })
   unitName: string
+
   @ApiProperty({
-    description: '单位标识'
+    description: '单位标识',
+    example: ""
   })
   @Column({
     name:'unit_code',
@@ -115,4 +139,18 @@ export class DpProject extends CommonEntity {
   })
   unitCode: string
 
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = nanoid()
+    }
+    this.sysCreateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
+
+  @BeforeUpdate()
+  updateTime() {
+    this.sysUpdateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
 }
+

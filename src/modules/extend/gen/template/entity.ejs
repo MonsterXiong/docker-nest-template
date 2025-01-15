@@ -1,12 +1,17 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn } from 'typeorm' ;
+import { Column, Entity,PrimaryColumn, UpdateDateColumn, CreateDateColumn, DeleteDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm' ;
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonEntity } from '../../common/common.entity';
+import { nanoid } from 'nanoid';
+import { format } from 'date-fns';
 
-@Entity()
+@Entity({
+  comment: '<%= tableComment %>'
+})
 export class <%=TableName %> extends CommonEntity {
-<%_ fields.filter(field=>!field.columnOptions.Field.startsWith('sys_')).forEach(function(field){ -%>
+<% fields.filter(field=>!field.columnOptions.Field.startsWith('sys_')).forEach(function(field){ %>
   @ApiProperty({
-    description: '<%=field.comment %>'
+    description: '<%=field.comment %>',
+    example: ""
   })
   <%_if (field.isPrimary) { -%>
   @PrimaryColumn({
@@ -30,4 +35,18 @@ export class <%=TableName %> extends CommonEntity {
   })
   <%=field.columnName %>: <%=field.type %>
 <% }); %>
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.<%= primaryKey %>) {
+      this.<%= primaryKey %> = nanoid()
+    }
+    this.sysCreateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
+
+  @BeforeUpdate()
+  updateTime() {
+    this.sysUpdateTime = format(new Date(), 'yyyy:MM:dd HH:mm:ss');
+  }
 }
+

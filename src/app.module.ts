@@ -5,15 +5,16 @@ import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './config/winston.config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 // 导入所有功能模块
-import { SLogModule,SLog } from './modules/system/sLog';
-import { SCategoryModule } from './modules/system/sCategory';
-import { SCategoryTypeModule } from './modules/system/sCategoryType';
+// import { SLogModule,SLog } from './modules/system/sLog';
+// import { SCategoryModule } from './modules/system/sCategory';
+// import { SCategoryTypeModule } from './modules/system/sCategoryType';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { IpMiddleware } from './middlewares/ip.middleware';
 import { GenModule } from './modules/extend/gen/gen.module';
 import { DbModule } from './modules/extend/db/db.module';
 import MODULE_LIST from './modules';
 import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
+// import { SLog } from './modules/base/sLog';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/modules/base/**/*.entity{.ts,.js}'], 
-        synchronize: true, // 开发环境使用，生产环境请设置为false
+        synchronize: false, // 开发环境使用，生产环境请设置为false
         // dropSchema: true,
         autoLoadEntities: true,
         keepConnectionAlive: true,
@@ -43,23 +44,23 @@ import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([SLog]),
+    // TypeOrmModule.forFeature([SLog]),
     // Winston日志模块
     WinstonModule.forRoot(winstonConfig),
     // 功能模块
-    SLogModule,
-    SCategoryModule,
-    SCategoryTypeModule,
+    // SLogModule,
+    // SCategoryModule,
+    // SCategoryTypeModule,
     GenModule,
     DbModule,
     NavExtendModule,
     ...MODULE_LIST
   ],
   providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: LoggingInterceptor,
+    // },
     // {
     //   provide: APP_GUARD,
     //   useClass: IpRoleGuard,

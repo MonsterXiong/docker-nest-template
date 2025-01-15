@@ -7,8 +7,11 @@ WORKDIR /usr/src/app
 # 复制 package.json 和 package-lock.json
 COPY package*.json ./
 
+# 安装 PM2 全局
+RUN npm install -g pm2
+
 # 安装项目依赖
-RUN npm install
+RUN npm install --production
 
 # 复制项目文件
 COPY . .
@@ -26,5 +29,6 @@ ENV DATABASE_HOST=localhost \
 # 暴露应用端口
 EXPOSE 3000
 
-# 启动应用
-CMD ["node", "dist/main"]
+
+# 使用 PM2 启动应用
+CMD ["pm2-runtime", "start", "dist/main.js", "--name", "nest-app"]

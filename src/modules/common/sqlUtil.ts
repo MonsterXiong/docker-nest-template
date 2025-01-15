@@ -86,9 +86,9 @@ function genOrderBy(condition, index) {
   let result = ''
   const sortType = isDesc ? SORT_TYPE.DESC : SORT_TYPE.ASC
   if (index == 0) {
-    result = `.orderBy('${property}','${sortType}')`
+    result = `.orderBy('${snakeCase(property)}','${sortType}')`
   } else {
-    result = `.addOrderBy('${property}','${sortType}')`
+    result = `.addOrderBy('${snakeCase(property)}','${sortType}')`
   }
   return result
 }
