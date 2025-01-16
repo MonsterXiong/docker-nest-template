@@ -127,9 +127,14 @@ export class <%= TableName %>Service extends CommonService {
   async queryList(params: any) {
     return queryParams(params, this)
   }
-  save(entity: Partial<<%= TableName %>>,req) {
+  async save(entity: Partial<<%= TableName %>>,req) {
     if(entity.<%= primaryKey %>){
-      return this.update(entity,req)
+      const data = await this.findOne(entity.<%= primaryKey %>)
+      if(!data){
+        return this.insert(entity,req)
+      }else{
+        return this.update(entity,req)
+      }
     }else{
       return this.insert(entity,req)
     }

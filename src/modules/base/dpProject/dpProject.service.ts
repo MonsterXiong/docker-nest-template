@@ -127,9 +127,14 @@ export class DpProjectService extends CommonService {
   async queryList(params: any) {
     return queryParams(params, this)
   }
-  save(entity: Partial<DpProject>,req) {
+  async save(entity: Partial<DpProject>,req) {
     if(entity.id){
-      return this.update(entity,req)
+      const data = await this.findOne(entity.id)
+      if(!data){
+        return this.insert(entity,req)
+      }else{
+        return this.update(entity,req)
+      }
     }else{
       return this.insert(entity,req)
     }
