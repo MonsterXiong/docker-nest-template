@@ -39,9 +39,6 @@ export class GenController {
     return await this.genService.getCurdServiceCodeList(dbInfo);
   }
 
-
-
-
   @Post('genServiceCode/:tableName')
   @ApiOperation({ 
     summary: '根据单表生成代码',

@@ -18,7 +18,7 @@ export class DpProjectService extends CommonService {
     super(repository);
   }
 
-  async findOne( id) {
+  async findOne(id) {
     return await this.repository.findOne({ where: { sysIsDel: '0',  id } });
   }
 

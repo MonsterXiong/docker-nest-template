@@ -5,12 +5,14 @@ import { DpProjectModule } from 'src/modules/base/dpProject/dpProject.module';
 import { DpProjectInfoModule } from 'src/modules/base/dpProjectInfo';
 import { DpMenuDetailModule } from 'src/modules/base/dpMenuDetail';
 import { DpMenuModule } from 'src/modules/base/dpMenu';
+import { DbModule } from '../db';
 @Module({
   imports: [
     DpProjectModule,
     DpProjectInfoModule,
     DpMenuDetailModule,
     DpMenuModule,
+    DbModule
   ],
   controllers: [DpProjectExtendController],
   providers: [DpProjectExtendService],
