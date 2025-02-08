@@ -14,6 +14,7 @@ import { GenModule } from './modules/extend/gen/gen.module';
 import { DbModule } from './modules/extend/db/db.module';
 import MODULE_LIST from './modules';
 import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
+import { PageGenModule } from './modules/extend/page-gen/page-gen.module';
 
 @Module({
   imports: [
@@ -53,7 +54,8 @@ import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
     GenModule,
     DbModule,
     NavExtendModule,
-    ...MODULE_LIST
+    ...MODULE_LIST,
+    PageGenModule
   ],
   providers: [
     {
