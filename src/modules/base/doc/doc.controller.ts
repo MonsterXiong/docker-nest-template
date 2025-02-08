@@ -37,7 +37,7 @@ import {
     async downloadDocTemplate(@Res() res: Response): Promise<void> {
       const buffer = this.docService.downloadDocTemplate();
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=doc_template.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=文档模板.xlsx');
       res.send(buffer);
     }
   

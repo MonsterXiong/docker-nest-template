@@ -28,7 +28,7 @@ export class DpMenuDetail extends CommonEntity {
   })
   @Column({
     name:'name',
-    nullable: false,
+    nullable: true,
     type: 'varchar',
     comment: '名称',
     length: 50,
@@ -47,19 +47,6 @@ export class DpMenuDetail extends CommonEntity {
     length: 50,
   })
   fullName: string
-
-  @ApiProperty({
-    description: '所属菜单',
-    example: ""
-  })
-  @Column({
-    name:'bind_menu',
-    nullable: false,
-    type: 'varchar',
-    comment: '所属菜单',
-    length: 32,
-  })
-  bindMenu: string
 
   @ApiProperty({
     description: '英文名称',
@@ -88,6 +75,19 @@ export class DpMenuDetail extends CommonEntity {
   syncId: string
 
   @ApiProperty({
+    description: '标识',
+    example: ""
+  })
+  @Column({
+    name:'code',
+    nullable: true,
+    type: 'varchar',
+    comment: '标识',
+    length: 32,
+  })
+  code: string
+
+  @ApiProperty({
     description: '配置',
     example: ""
   })
@@ -101,17 +101,17 @@ export class DpMenuDetail extends CommonEntity {
   configParam: string
 
   @ApiProperty({
-    description: '标识',
+    description: '所属菜单',
     example: ""
   })
   @Column({
-    name:'code',
+    name:'bind_menu',
     nullable: false,
     type: 'varchar',
-    comment: '标识',
+    comment: '所属菜单',
     length: 32,
   })
-  code: string
+  bindMenu: string
 
   @ApiProperty({
     description: '描述',

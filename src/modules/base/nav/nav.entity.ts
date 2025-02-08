@@ -93,7 +93,7 @@ export class Nav extends CommonEntity {
   })
   @Column({
     name:'bind_unit',
-    nullable: true,
+    nullable: false,
     type: 'varchar',
     comment: '所属单位',
     length: 32,

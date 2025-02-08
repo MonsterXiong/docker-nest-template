@@ -1,4 +1,5 @@
 import { DocModule } from './base/doc';
+import { DpEnvConfigModule } from './base/dpEnvConfig';
 import { DpMenuModule } from './base/dpMenu';
 import { DpMenuDetailModule } from './base/dpMenuDetail';
 import { DpProjectModule } from './base/dpProject';
@@ -8,10 +9,11 @@ import { NavModule } from './base/nav';
 
 export default [
   DocModule,
+  DpEnvConfigModule,
   DpMenuModule,
   DpMenuDetailModule,
   DpProjectModule,
   DpProjectInfoModule,
   DpTemplateModule,
-  NavModule
+  NavModule,
 ];

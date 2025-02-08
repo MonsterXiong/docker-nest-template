@@ -152,26 +152,27 @@ export class DpTemplate extends CommonEntity {
   templateCode: string
 
   @ApiProperty({
-    description: '模板算法',
+    description: '模板类型',
     example: ""
   })
   @Column({
-    name:'template_algithorm',
+    name:'template_type',
     nullable: true,
-    type: 'text',
-    comment: '模板算法',
+    type: 'varchar',
+    comment: '模板类型',
+    length: 50,
   })
-  templateAlgithorm: string
+  templateType: string
 
   @ApiProperty({
-    description: '模板类型',
+    description: '模板后缀名',
     example: ""
   })
   @Column({
     name:'template_ext',
     nullable: true,
     type: 'varchar',
-    comment: '模板类型',
+    comment: '模板后缀名',
     length: 50,
   })
   templateExt: string

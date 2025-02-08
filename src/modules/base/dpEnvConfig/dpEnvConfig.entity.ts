@@ -5,19 +5,19 @@ import { nanoid } from 'nanoid';
 import { format } from 'date-fns';
 
 @Entity({
-  comment: '项目信息'
+  comment: '环境变量配置'
 })
-export class DpProjectInfo extends CommonEntity {
+export class DpEnvConfig extends CommonEntity {
 
   @ApiProperty({
-    description: '主键',
+    description: 'ID',
     example: ""
   })
   @PrimaryColumn({
     name:'id',
     nullable: false,
     type: 'varchar',
-    comment: '主键',
+    comment: 'ID',
     length: 32,
   })
   id: string
@@ -28,7 +28,7 @@ export class DpProjectInfo extends CommonEntity {
   })
   @Column({
     name:'name',
-    nullable: true,
+    nullable: false,
     type: 'varchar',
     comment: '名称',
     length: 50,
@@ -47,19 +47,6 @@ export class DpProjectInfo extends CommonEntity {
     length: 50,
   })
   fullName: string
-
-  @ApiProperty({
-    description: '同步项目id',
-    example: ""
-  })
-  @Column({
-    name:'sync_id',
-    nullable: true,
-    type: 'varchar',
-    comment: '同步项目id',
-    length: 32,
-  })
-  syncId: string
 
   @ApiProperty({
     description: '标识',
@@ -101,147 +88,134 @@ export class DpProjectInfo extends CommonEntity {
   bindProject: string
 
   @ApiProperty({
-    description: '数据库主机',
+    description: '父id',
     example: ""
   })
   @Column({
-    name:'db_host',
+    name:'parentId',
+    nullable: true,
+    type: 'varchar',
+    comment: '父id',
+    length: 32,
+  })
+  parentId: string
+
+  @ApiProperty({
+    description: '键',
+    example: ""
+  })
+  @Column({
+    name:'key',
     nullable: false,
     type: 'varchar',
-    comment: '数据库主机',
-    length: 32,
+    comment: '键',
+    length: 50,
   })
-  dbHost: string
+  key: string
 
   @ApiProperty({
-    description: '数据库用户名',
+    description: '类型',
     example: ""
   })
   @Column({
-    name:'db_user',
+    name:'type',
     nullable: false,
     type: 'varchar',
-    comment: '数据库用户名',
-    length: 32,
+    comment: '类型',
+    length: 50,
   })
-  dbUser: string
+  type: string
 
   @ApiProperty({
-    description: '数据库密码',
+    description: '值类型',
     example: ""
   })
   @Column({
-    name:'db_password',
+    name:'value_type',
     nullable: false,
     type: 'varchar',
-    comment: '数据库密码',
-    length: 32,
+    comment: '值类型',
+    length: 50,
   })
-  dbPassword: string
+  valueType: string
 
   @ApiProperty({
-    description: '数据库端口',
+    description: '值',
     example: ""
   })
   @Column({
-    name:'db_port',
-    nullable: false,
-    type: 'varchar',
-    comment: '数据库端口',
-    length: 32,
-  })
-  dbPort: string
-
-  @ApiProperty({
-    description: '数据库名称',
-    example: ""
-  })
-  @Column({
-    name:'db_name',
-    nullable: false,
-    type: 'varchar',
-    comment: '数据库名称',
-    length: 32,
-  })
-  dbName: string
-
-  @ApiProperty({
-    description: '仓库地址',
-    example: ""
-  })
-  @Column({
-    name:'git_url',
+    name:'value',
     nullable: true,
     type: 'varchar',
-    comment: '仓库地址',
-    length: 32,
+    comment: '值',
+    length: 255,
   })
-  gitUrl: string
+  value: string
 
   @ApiProperty({
-    description: 'jenkins',
+    description: '开发环境值',
     example: ""
   })
   @Column({
-    name:'jenkins',
+    name:'dev_value',
     nullable: true,
     type: 'varchar',
-    comment: 'jenkins',
-    length: 32,
+    comment: '开发环境值',
+    length: 255,
   })
-  jenkins: string
+  devValue: string
 
   @ApiProperty({
-    description: '接口前缀',
+    description: '生产环境值',
     example: ""
   })
   @Column({
-    name:'api_prefix',
+    name:'prod_value',
     nullable: true,
     type: 'varchar',
-    comment: '接口前缀',
-    length: 32,
+    comment: '生产环境值',
+    length: 255,
   })
-  apiPrefix: string
+  prodValue: string
 
   @ApiProperty({
-    description: '输出目录',
+    description: '预发布环境值',
     example: ""
   })
   @Column({
-    name:'output_dir',
+    name:'staging_value',
     nullable: true,
     type: 'varchar',
-    comment: '输出目录',
-    length: 32,
+    comment: '预发布环境值',
+    length: 255,
   })
-  outputDir: string
+  stagingValue: string
 
   @ApiProperty({
-    description: '所属框架',
+    description: '配置值',
     example: ""
   })
   @Column({
-    name:'bind_framework',
+    name:'config_value',
     nullable: true,
     type: 'varchar',
-    comment: '所属框架',
-    length: 32,
+    comment: '配置值',
+    length: 255,
   })
-  bindFramework: string
+  configValue: string
 
   @ApiProperty({
-    description: '项目端口',
+    description: '同步配置',
     example: ""
   })
   @Column({
-    name:'port',
+    name:'sync_config',
     nullable: true,
-    type: 'int',
-    comment: '项目端口',
-    width: 10,
+    type: 'varchar',
+    comment: '同步配置',
+    length: 255,
   })
-  port: number
+  syncConfig: string
 
 
   @BeforeInsert()
