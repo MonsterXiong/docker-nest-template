@@ -94,9 +94,8 @@ export class DpMenuDetail extends CommonEntity {
   @Column({
     name:'config_param',
     nullable: true,
-    type: 'varchar',
+    type: 'text',
     comment: '配置',
-    length: 255,
   })
   configParam: string
 

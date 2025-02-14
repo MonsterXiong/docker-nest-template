@@ -15,5 +15,5 @@ export default [
   DpProjectModule,
   DpProjectInfoModule,
   DpTemplateModule,
-  NavModule,
+  NavModule
 ];

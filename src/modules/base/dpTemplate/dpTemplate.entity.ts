@@ -62,6 +62,18 @@ export class DpTemplate extends CommonEntity {
   code: string
 
   @ApiProperty({
+    description: '布局配置',
+    example: ""
+  })
+  @Column({
+    name:'layout_param',
+    nullable: true,
+    type: 'text',
+    comment: '布局配置',
+  })
+  layoutParam: string
+
+  @ApiProperty({
     description: '描述',
     example: ""
   })

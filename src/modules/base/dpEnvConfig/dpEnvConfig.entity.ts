@@ -28,7 +28,7 @@ export class DpEnvConfig extends CommonEntity {
   })
   @Column({
     name:'name',
-    nullable: false,
+    nullable: true,
     type: 'varchar',
     comment: '名称',
     length: 50,
