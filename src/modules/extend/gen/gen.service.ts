@@ -39,7 +39,7 @@ export class GenService {
    */
   async getCurdServiceCodeList(dbInfo: DatabaseConfigDto): Promise<any> {
       this.logger.log(`开始生成所有表的代码`);
-      const tableInfoList = await this.dbService.getTableList(dbInfo);
+      const tableInfoList = await this.dbService.getNoSysTableList(dbInfo);
       return await GenUtil.renderCurdServiceCodeList(tableInfoList);
   }
 

@@ -17,6 +17,7 @@ import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
 import { PageGenModule } from './modules/extend/page-gen/page-gen.module';
 import { TranslatorModule } from './modules/extend/translator/translator.module';
 import { GitlabModule } from './modules/extend/gitlab/gitlab.module';
+import { TestModule } from './modules/extend/test/test.module';
 
 @Module({
   imports: [
@@ -59,7 +60,8 @@ import { GitlabModule } from './modules/extend/gitlab/gitlab.module';
     ...MODULE_LIST,
     PageGenModule,
     TranslatorModule,
-    GitlabModule
+    GitlabModule,
+    TestModule,
   ],
   providers: [
     {
