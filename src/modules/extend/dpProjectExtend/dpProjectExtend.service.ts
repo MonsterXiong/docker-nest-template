@@ -75,4 +75,27 @@ export class DpProjectExtendService {
     const dbConfig = await this.getDbConfigByProjectId(id);
     return this.dbService.getTableList(dbConfig);
   }
+
+  async genProject(id){
+    // 获取项目信息
+    const projectInfo = await this.getProjectInfo(id)
+    // 获取项目配置信息
+    // 获取菜单信息以及菜单详情信息
+    // 获取模板信息
+
+
+    // 开始生成
+
+    // 生成menuData
+    // 生成page
+
+    // 生成service
+    // 生成枚举
+
+    // 生成配置文件
+
+    // 生成package.json
+  }
+
+
 }
