@@ -14,10 +14,11 @@ import { GenModule } from './modules/extend/gen/gen.module';
 import { DbModule } from './modules/extend/db/db.module';
 import MODULE_LIST from './modules';
 import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
-import { PageGenModule } from './modules/extend/page-gen/page-gen.module';
-import { TranslatorModule } from './modules/extend/translator/translator.module';
 import { GitlabModule } from './modules/extend/gitlab/gitlab.module';
-import { TestModule } from './modules/extend/test/test.module';
+import { DpTemplateSubscriber } from './subscribers/dpTemplate.subscriber';
+import { CommonModule } from './modules/extend/common/common.module';
+import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
+import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
 
 @Module({
   imports: [
@@ -58,12 +59,13 @@ import { TestModule } from './modules/extend/test/test.module';
     DbModule,
     NavExtendModule,
     ...MODULE_LIST,
-    PageGenModule,
-    TranslatorModule,
+    DpProjectExtendModule,
     GitlabModule,
-    TestModule,
+    CommonModule,
+    BootstrapModule,
   ],
   providers: [
+    DpTemplateSubscriber,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,

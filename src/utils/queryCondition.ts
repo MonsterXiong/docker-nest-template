@@ -10,6 +10,8 @@ class QueryConditionBuilder {
     const instance = new QueryConditionBuilder();
     instance.sortParams = [];
     instance.conditionParams = [];
+    instance.pageNumber = 1;
+    instance.pageSize = 9999999999;
     return instance;
   }
 

@@ -153,58 +153,6 @@ export class DpEnvConfig extends CommonEntity {
   value: string
 
   @ApiProperty({
-    description: '开发环境值',
-    example: ""
-  })
-  @Column({
-    name:'dev_value',
-    nullable: true,
-    type: 'varchar',
-    comment: '开发环境值',
-    length: 255,
-  })
-  devValue: string
-
-  @ApiProperty({
-    description: '生产环境值',
-    example: ""
-  })
-  @Column({
-    name:'prod_value',
-    nullable: true,
-    type: 'varchar',
-    comment: '生产环境值',
-    length: 255,
-  })
-  prodValue: string
-
-  @ApiProperty({
-    description: '预发布环境值',
-    example: ""
-  })
-  @Column({
-    name:'staging_value',
-    nullable: true,
-    type: 'varchar',
-    comment: '预发布环境值',
-    length: 255,
-  })
-  stagingValue: string
-
-  @ApiProperty({
-    description: '配置值',
-    example: ""
-  })
-  @Column({
-    name:'config_value',
-    nullable: true,
-    type: 'varchar',
-    comment: '配置值',
-    length: 255,
-  })
-  configValue: string
-
-  @ApiProperty({
     description: '同步配置',
     example: ""
   })

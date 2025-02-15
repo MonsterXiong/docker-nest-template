@@ -3,11 +3,13 @@ import { DpProjectExtendService } from './dpProjectExtend.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { handleGit } from 'src/utils/autoDeploy';
 import { handleCode } from 'src/utils/git';
+import { CommonService } from 'src/modules/extend/common/common.service';
 
 @Controller('dpProjectExtend')
 export class DpProjectExtendController {
   constructor(
     private readonly dpProjectExtendService: DpProjectExtendService,
+    private readonly commonService: CommonService,
   ) {}
 
   @Post('/db/tables')
@@ -30,5 +32,12 @@ export class DpProjectExtendController {
     await handleCode(gitUrl)
     // 处理jenkins
     return 'ok'
+  }
+
+  @Get('gen')
+  @ApiOperation({ summary: '测试' })
+  async genProject(@Query('id') id: string) {
+    const result = await this.dpProjectExtendService.genProject(id)
+    return result || 'ok'
   }
 }
