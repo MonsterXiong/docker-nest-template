@@ -3,6 +3,7 @@
 import * as changeCase from 'change-case';
 import { VM } from 'vm2';
 import { parseColumnType } from './parseColumnType';
+import * as treeTool from 'src/utils/treeTool';
 
 export class VMRunner {
   private static instance: VMRunner | null = null;  // 静态属性保存唯一实例
@@ -15,7 +16,8 @@ export class VMRunner {
       sandbox: {
         utils: {
           changeCase,
-          parseColumnType
+          parseColumnType,
+          treeTool
         },
         console: {
           log: (...args) => console.log(...args),

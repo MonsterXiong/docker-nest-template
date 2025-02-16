@@ -8,8 +8,9 @@ import { DbService } from '../db';
 import { DatabaseConfigDto } from 'src/shared/dto/database.dto';
 import { DpEnvConfigService } from 'src/modules/base/dpEnvConfig';
 import { CommonService } from 'src/modules/extend/common/common.service';
-import { listToTree,TreeNode  } from 'src/utils/treeTool';
-
+import { listToTree, TreeNode } from 'src/utils/treeTool';
+import * as changeCase from 'change-case'
+import path from 'path';
 @Injectable()
 export class DpProjectExtendService {
   constructor(
@@ -50,15 +51,15 @@ export class DpProjectExtendService {
     return { ...project, projectInfo };
   }
 
-  async getEnvConfig(id):Promise<TreeNode[]>{
+  async getEnvConfig(id): Promise<TreeNode[]> {
     const queryCondition =
-    QueryConditionBuilder.getInstanceNoPage().buildEqualQuery(
-      'bindProject',
-      id,
-    ).buildAscSort('sysSort');;
+      QueryConditionBuilder.getInstanceNoPage().buildEqualQuery(
+        'bindProject',
+        id,
+      ).buildAscSort('sysSort');;
 
-    const { data} = await this.dpEnvConfigService.queryList(queryCondition);
-    
+    const { data } = await this.dpEnvConfigService.queryList(queryCondition);
+
     return listToTree(data)
   }
   async getMenu(id) {
@@ -96,7 +97,6 @@ export class DpProjectExtendService {
 
 
   async genProject(id) {
-    console.time('start')
     const [projectInfo, envConfigList, menuList, dbList] = await Promise.all([
       // 获取项目信息
       this.getProjectInfo(id),
@@ -107,20 +107,33 @@ export class DpProjectExtendService {
       // 获取数据库信息
       this.getTableAndColumnByProjectId(id)
     ])
-    console.timeEnd('start')
-
     // 生成前端
     const pageData = this.commonService.getCode(projectInfo, menuList, 'page')
-    // 生成后端
-    const dbData = this.commonService.getCode(projectInfo, dbList, 'interface')
-    // 生成后端module，根据dbList
-    const envConfigData = this.commonService.getCode(projectInfo, envConfigList, 'config')
-    // console.log(envConfigList.filter(item=>item.type=='env'),'projectEnvCOnfig');
-    
+
+    // todo:生成完页面需要生成路由数据=>还需要完善
+    const routeData = this.commonService.getCode(projectInfo, listToTree(menuList), 'route')
+
+    // 生成env数据 todo:config数据=>还需要完善
+    const envConfigData = this.commonService.getCode(projectInfo, envConfigList, 'config',true)
+
+    // 生成后端接口
+    const interfaceData = this.commonService.getCode(projectInfo, dbList, 'interface')
+    const moduleData = this.commonService.getCode(projectInfo, dbList, 'module',true)
+
+    // todo:生成枚举
+
+    const page = format(pageData)
+    const db = format(interfaceData, 'tableName')
+    const moduleEntry = format(moduleData, '')
+    const route = format(routeData)
+    const envConfig = format(envConfigData, '')
+    // 需要清洗路径和数据
     return {
-      // pageData,
-      // dbData,
-      envConfigData,
+      pageData: page,
+      interfaceData: db,
+      moduleData: moduleEntry,
+      routeData: route,
+      envConfigData: envConfig,
       // param: {
       //   projectInfo,
       //   envConfigList,
@@ -128,18 +141,34 @@ export class DpProjectExtendService {
       // },
     }
 
-    // 开始生成
-
-    // 生成menuData
-    // 生成page
-
-    // 生成service
-    // 生成枚举
-
-    // 生成配置文件
-
-    // 生成package.json
   }
 
 
+}
+
+function format(data, key = 'code') {
+  const result = []
+  data.forEach(item => {
+    if (item?.children?.length) {
+      item.children.forEach(childItem => {
+        result.push(formatData(childItem, item[key]))
+      })
+    } else {
+      result.push(formatData(item, item[key]))
+    }
+  })
+  return result
+}
+
+function formatData(item, name) {
+  const Code = name ? changeCase.pascalCase(name) : ''
+  const code = name ? changeCase.camelCase(name) : ''
+  let filePath = item.filePath.replaceAll('{Code}', Code).replaceAll('{code}', code)
+  if (item.fileExt) {
+    filePath += `.${item.fileExt}`
+  }
+  return {
+    content: item.code,
+    filePath: path.join(filePath)
+  }
 }

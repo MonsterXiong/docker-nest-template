@@ -153,6 +153,19 @@ export class DpEnvConfig extends CommonEntity {
   value: string
 
   @ApiProperty({
+    description: '同步数据的id存储',
+    example: ""
+  })
+  @Column({
+    name:'sync_id',
+    nullable: true,
+    type: 'varchar',
+    comment: '同步数据的id存储',
+    length: 32,
+  })
+  syncId: string
+
+  @ApiProperty({
     description: '同步配置',
     example: ""
   })

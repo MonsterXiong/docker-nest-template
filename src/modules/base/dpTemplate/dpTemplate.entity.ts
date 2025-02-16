@@ -126,30 +126,17 @@ export class DpTemplate extends CommonEntity {
   bindGenTemplateType: string
 
   @ApiProperty({
-    description: '父级ID',
+    description: '模板内容类型',
     example: ""
   })
   @Column({
-    name:'parent_id',
+    name:'template_content_type',
     nullable: true,
     type: 'varchar',
-    comment: '父级ID',
-    length: 32,
+    comment: '模板内容类型',
+    length: 50,
   })
-  parentId: string
-
-  @ApiProperty({
-    description: '相对路径',
-    example: ""
-  })
-  @Column({
-    name:'relative_path',
-    nullable: true,
-    type: 'varchar',
-    comment: '相对路径',
-    length: 255,
-  })
-  relativePath: string
+  templateContentType: string
 
   @ApiProperty({
     description: '模板代码',
@@ -188,6 +175,32 @@ export class DpTemplate extends CommonEntity {
     length: 50,
   })
   templateExt: string
+
+  @ApiProperty({
+    description: '父级ID',
+    example: ""
+  })
+  @Column({
+    name:'parent_id',
+    nullable: true,
+    type: 'varchar',
+    comment: '父级ID',
+    length: 32,
+  })
+  parentId: string
+
+  @ApiProperty({
+    description: '相对路径',
+    example: ""
+  })
+  @Column({
+    name:'relative_path',
+    nullable: true,
+    type: 'varchar',
+    comment: '相对路径',
+    length: 255,
+  })
+  relativePath: string
 
 
   @BeforeInsert()

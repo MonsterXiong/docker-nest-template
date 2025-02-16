@@ -29,14 +29,15 @@ export class CommonService implements OnModuleInit {
       if (templateItem.templateCode) {
         return {
           code: ejs.render(templateItem.templateCode, templateData),
-          relativePath: templateItem.relativePath,
+          filePath: templateItem.filePath,
+          fileExt:templateItem.templateExt
         }
       }
     });
   }
 
-  getCode(projectInfo, list, type) {
-    if(type == "config"){
+  getCode(projectInfo, list, type,isSingle =false) {
+    if(isSingle){
       return this._genCode(type, {
         PROJECT_INFO:projectInfo,
         PARAMS:list

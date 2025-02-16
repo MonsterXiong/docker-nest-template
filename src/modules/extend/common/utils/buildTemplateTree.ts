@@ -8,17 +8,17 @@ export function buildTemplateTree(data) {
   
     function collectDescendants(parentNode, baseDepth, basePath) {
       const descendants = [];
-      const stack = [{ node: parentNode, depth: baseDepth + 1, path: parentNode.templateType == 'module'?'':`${basePath}/${parentNode.code}` }];
+      const stack = [{ node: parentNode, depth: baseDepth + 1, filePath: parentNode.templateType == 'module'?parentNode.relativePath:`${basePath}/${parentNode.relativePath}` }];
       
       while (stack.length > 0) {
-        const { node, depth, path } = stack.pop();
+        const { node, depth, filePath } = stack.pop();
         
         // 收集当前节点（排除自己）
         if (node.id !== parentNode.id) {
           descendants.push({
             ...node,
             depth,
-            relativePath: path,
+            filePath,
             children: []
           });
         }
@@ -29,7 +29,7 @@ export function buildTemplateTree(data) {
           stack.push({
             node: child,
             depth: depth + 1,
-            path: `${path}/${child.code}`
+            filePath:`${filePath}/${child.relativePath}`
           });
         }
       }
@@ -38,14 +38,14 @@ export function buildTemplateTree(data) {
   
     return topLevelNodes.map(node => {
       const isModule = node.templateType === 'module';
-      const basePath = '';
+      const basePath = node.relativePath;
       const depth = 1;
   
       // 构建当前节点
       const currentNode = {
         ...node,
         depth,
-        relativePath: basePath,
+        filePath: basePath,
         children: []
       };
   

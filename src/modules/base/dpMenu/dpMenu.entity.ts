@@ -101,6 +101,45 @@ export class DpMenu extends CommonEntity {
   description: string
 
   @ApiProperty({
+    description: '菜单类型',
+    example: ""
+  })
+  @Column({
+    name:'type',
+    nullable: true,
+    type: 'varchar',
+    comment: '菜单类型',
+    length: 50,
+  })
+  type: string
+
+  @ApiProperty({
+    description: '菜单图标',
+    example: ""
+  })
+  @Column({
+    name:'icon',
+    nullable: true,
+    type: 'varchar',
+    comment: '菜单图标',
+    length: 50,
+  })
+  icon: string
+
+  @ApiProperty({
+    description: '菜单参数',
+    example: ""
+  })
+  @Column({
+    name:'menu_params',
+    nullable: true,
+    type: 'varchar',
+    comment: '菜单参数',
+    length: 255,
+  })
+  menuParams: string
+
+  @ApiProperty({
     description: '所属项目',
     example: ""
   })
