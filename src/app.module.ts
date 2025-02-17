@@ -19,6 +19,8 @@ import { DpTemplateSubscriber } from './subscribers/dpTemplate.subscriber';
 import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './modules/system/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjec
     GitlabModule,
     CommonModule,
     BootstrapModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
   ],
   providers: [
     DpTemplateSubscriber,
