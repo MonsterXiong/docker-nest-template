@@ -120,7 +120,7 @@ import {
       return this.docService.insertBatch(entity,req);
     }
   
-    @Post('queryDocDtoByCondition')
+    @Post('queryDocDTOByCondition')
     @ApiOperation({ summary: '查询文档列表结果' })
     queryDoc(@Body() condition:QueryCondition) {
       return this.docService.queryList(condition)

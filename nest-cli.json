@@ -9,6 +9,10 @@
       {
         "include": "**/*.ejs",
         "outDir": "dist"
+      },
+      {
+        "include": "public/**/*",
+        "outDir": "dist/public"
       }
     ]
   }

@@ -120,7 +120,7 @@ import {
       return this.navService.insertBatch(entity,req);
     }
   
-    @Post('queryNavDtoByCondition')
+    @Post('queryNavDTOByCondition')
     @ApiOperation({ summary: '查询导航列表结果' })
     queryNav(@Body() condition:QueryCondition) {
       return this.navService.queryList(condition)

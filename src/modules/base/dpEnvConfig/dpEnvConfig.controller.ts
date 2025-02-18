@@ -120,7 +120,7 @@ import {
       return this.dpEnvConfigService.insertBatch(entity,req);
     }
   
-    @Post('queryDpEnvConfigDtoByCondition')
+    @Post('queryDpEnvConfigDTOByCondition')
     @ApiOperation({ summary: '查询环境变量配置列表结果' })
     queryDpEnvConfig(@Body() condition:QueryCondition) {
       return this.dpEnvConfigService.queryList(condition)

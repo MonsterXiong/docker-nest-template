@@ -21,6 +21,7 @@ import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './modules/system/tasks/tasks.module';
+import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { TasksModule } from './modules/system/tasks/tasks.module';
     BootstrapModule,
     ScheduleModule.forRoot(),
     TasksModule,
+    DpMenuExtendModule,
   ],
   providers: [
     DpTemplateSubscriber,

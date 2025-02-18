@@ -120,7 +120,7 @@ import {
       return this.dpTemplateService.insertBatch(entity,req);
     }
   
-    @Post('queryDpTemplateDtoByCondition')
+    @Post('queryDpTemplateDTOByCondition')
     @ApiOperation({ summary: '查询模板列表结果' })
     queryDpTemplate(@Body() condition:QueryCondition) {
       return this.dpTemplateService.queryList(condition)

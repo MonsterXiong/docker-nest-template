@@ -5,6 +5,7 @@ import { DpMenuDetailModule } from './base/dpMenuDetail';
 import { DpProjectModule } from './base/dpProject';
 import { DpProjectInfoModule } from './base/dpProjectInfo';
 import { DpTemplateModule } from './base/dpTemplate';
+import { DpTemplatePromptModule } from './base/dpTemplatePrompt';
 import { NavModule } from './base/nav';
 
 export default [
@@ -15,5 +16,6 @@ export default [
   DpProjectModule,
   DpProjectInfoModule,
   DpTemplateModule,
+  DpTemplatePromptModule,
   NavModule
 ];

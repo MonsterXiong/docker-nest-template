@@ -120,7 +120,7 @@ import {
       return this.dpMenuService.insertBatch(entity,req);
     }
   
-    @Post('queryDpMenuDtoByCondition')
+    @Post('queryDpMenuDTOByCondition')
     @ApiOperation({ summary: '查询菜单列表结果' })
     queryDpMenu(@Body() condition:QueryCondition) {
       return this.dpMenuService.queryList(condition)
