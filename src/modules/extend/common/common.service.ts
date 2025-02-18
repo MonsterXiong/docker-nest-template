@@ -3,7 +3,7 @@ import { DpTemplateService } from 'src/modules/base/dpTemplate/dpTemplate.servic
 import { buildTemplateTree } from './utils/buildTemplateTree';
 import { VMRunner } from './utils/VMRunner';
 import * as ejs from 'ejs';
-
+import {getGroupList, getInterfaceBatch, getServiceBatch} from './utils/getSwaggerService'
 @Injectable()
 export class CommonService implements OnModuleInit {
   private TemplateTree;
@@ -22,18 +22,21 @@ export class CommonService implements OnModuleInit {
   _genCode(type, context) {
     // todo:优化 可删除
     this.onModuleInit()
-
+    
     const template = this.TemplateTree.find(item => item.code === type)
     const templateData = VMRunner.getInstance().run(template.templateCode, context)
-    return template.children.map((templateItem) => {
+    return template.children.reduce((pre,templateItem) => {
+      console.log(templateItem);
+      
       if (templateItem.templateCode) {
-        return {
+        pre.push({
           code: ejs.render(templateItem.templateCode, templateData),
           filePath: templateItem.filePath,
           fileExt:templateItem.templateExt
-        }
+        })
       }
-    });
+      return pre
+    },[]);
   }
 
   getCode(projectInfo, list, type,isSingle =false) {
@@ -59,4 +62,16 @@ export class CommonService implements OnModuleInit {
     })
   }
 
+
+
+  async getSwaggerService(){
+    const params= {
+      baseUrl:'http://192.168.2.231:8062' ,
+      account: 'admin',
+      password: '123456'
+    }
+    const groupList = await getGroupList(params)
+    let serviceList = await getServiceBatch(params.baseUrl,groupList)
+    return serviceList
+  }
 }

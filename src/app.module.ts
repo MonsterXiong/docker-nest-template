@@ -19,6 +19,7 @@ import { DpTemplateSubscriber } from './subscribers/dpTemplate.subscriber';
 import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
+import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjec
     GitlabModule,
     CommonModule,
     BootstrapModule,
+    DpMenuExtendModule,
   ],
   providers: [
     DpTemplateSubscriber,

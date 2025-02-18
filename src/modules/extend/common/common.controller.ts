@@ -1,4 +1,4 @@
-import { Controller, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { CommonService } from './common.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { BootstrapService } from '../bootstrap/bootstrap.service';
@@ -14,5 +14,11 @@ export class CommonController {
   @ApiOperation({ summary: '根据name进行翻译' })
   async translator(@Query('name') name: string) {
     return this.bootstrapService.translator(name)
+  }
+
+  @Get()
+  @ApiOperation({ summary: '根据name进行翻译' })
+  async getInterface() {
+    return this.commonService.getSwaggerService()
   }
 }

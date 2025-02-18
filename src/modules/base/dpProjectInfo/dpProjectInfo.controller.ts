@@ -120,7 +120,7 @@ import {
       return this.dpProjectInfoService.insertBatch(entity,req);
     }
   
-    @Post('queryDpProjectInfoDtoByCondition')
+    @Post('queryDpProjectInfoDTOByCondition')
     @ApiOperation({ summary: '查询项目信息列表结果' })
     queryDpProjectInfo(@Body() condition:QueryCondition) {
       return this.dpProjectInfoService.queryList(condition)

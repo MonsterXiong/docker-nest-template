@@ -120,7 +120,7 @@ import {
       return this.<%= tableName%>Service.insertBatch(entity,req);
     }
   
-    @Post('query<%= TableName %>DtoByCondition')
+    @Post('query<%= TableName %>DTOByCondition')
     @ApiOperation({ summary: '查询<%= tableComment %>列表结果' })
     query<%= TableName %>(@Body() condition:QueryCondition) {
       return this.<%= tableName%>Service.queryList(condition)
