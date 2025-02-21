@@ -18,12 +18,6 @@ export class CommonController {
   }
 
   @Get()
-  @ApiOperation({ summary: '根据name进行翻译' })
-  async getInterface() {
-    return this.commonService.getSwaggerService()
-  }
-
-  @Get()
   @ApiOperation({ summary: 'swagger' })
   async getInterface() {
     return this.commonService.getSwaggerService()
