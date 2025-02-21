@@ -19,7 +19,7 @@ import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from './modules/system/tasks/tasks.module';
+// import { TasksModule } from './modules/system/tasks/tasks.module';
 import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
 import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
@@ -67,7 +67,7 @@ import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemp
     CommonModule,
     BootstrapModule,
     ScheduleModule.forRoot(),
-    TasksModule,
+    // TasksModule,
     DpMenuExtendModule,
     DpGenModule,
     DpTemplateExtendModule,
