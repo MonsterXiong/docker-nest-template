@@ -4,6 +4,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
 import { handleGit } from 'src/utils/autoDeploy';
 import { handleCode } from 'src/utils/git';
+import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
 
 @Controller('dpGen')
 export class DpGenController {
@@ -18,30 +19,53 @@ export class DpGenController {
     return this.dpGenService.testPageData(templateId,menuId);
   }
 
-  @Post('genService')
+  @Post('genFeService')
   @ApiOperation({ summary: '通过项目Id生成service' })
   genService(@Query('id') id: string, @Res() res: Response) {
-    return this.dpGenService.genService(id,res)
+    return this.dpGenService.genProjectRelData(id,GenTypeMapEnum.BASE_SERVICE,res)
   }
 
-  @Post('getService')
-  @ApiOperation({ summary: '通过项目Id获取service' })
-  getService(@Query('id') id: string) {
-    return this.dpGenService.getServiceByProjectId(id)
-  }
-
-
-  @Post('genPage')
+  @Post('genFePage')
   @ApiOperation({ summary: '通过项目Id生成Page' })
   genPage(@Query('id') id: string, @Res() res: Response) {
-    return this.dpGenService.genPage(id,res)
+    return this.dpGenService.genProjectRelData(id,GenTypeMapEnum.PAGE,res)
+  }
+
+  @Post('genFeRoute')
+  @ApiOperation({ summary: '通过项目Id生成Route' })
+  genRoute(@Query('id') id: string, @Res() res: Response) {
+    return this.dpGenService.genProjectRelData(id,GenTypeMapEnum.ROUTE,res)
+  }
+
+  @Post('getFeService')
+  @ApiOperation({ summary: '通过项目Id获取base_service' })
+  getService(@Query('id') id: string) {
+    return this.dpGenService.getProjectRelData(id,GenTypeMapEnum.BASE_SERVICE)
+  }
+
+  @Post('getFeRoute')
+  @ApiOperation({ summary: '通过项目Id获取route' })
+  getRoute(@Query('id') id: string) {
+    return this.dpGenService.getProjectRelData(id,GenTypeMapEnum.ROUTE)
+  }
+
+  @Post('getFePage')
+  @ApiOperation({ summary: '通过项目Id获取page' })
+  getPage(@Query('id') id: string) {
+    return this.dpGenService.getProjectRelData(id,GenTypeMapEnum.PAGE)
+  }
+
+  @Post('getProject')
+  @ApiOperation({ summary: '通过项目Id获取项目数据' })
+  async getProject(@Query('id') id: string) {
+    const result = await this.dpGenService.getProject(id)
+    return result || 'ok'
   }
 
   @Post('genProject')
-  @ApiOperation({ summary: '测试' })
-  async genProject(@Query('id') id: string) {
-    const result = await this.dpGenService.genProject(id)
-    return result || 'ok'
+  @ApiOperation({ summary: '通过项目Id生成项目' })
+  genProject(@Query('id') id: string, @Res() res: Response) {
+    return this.dpGenService.genProject(id,res)
   }
 
   @Get()

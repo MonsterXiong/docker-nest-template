@@ -8,7 +8,6 @@ import { DpTemplateModule } from './base/dpTemplate';
 import { DpTemplatePromptModule } from './base/dpTemplatePrompt';
 import { NavModule } from './base/nav';
 
-
 export default [
   DocModule,
   DpEnvConfigModule,

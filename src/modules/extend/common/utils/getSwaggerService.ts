@@ -7,7 +7,6 @@ const axios = require('axios')
 const _ = require('lodash')
 const folderPath = path.join(__dirname, '../service/module/businessService')
 let chromiumpath = path.resolve(__dirname, '../../../../../public/tool/chrome-win/chrome.exe')
-console.log(chromiumpath);
 
 // let chromiumpath = '/usr/bin/google-chrome'
 let replayCount = 0

@@ -9,44 +9,37 @@
  * const status = PreviewStatus.DEMO;   // 表示演示项目
  */
 export enum GenTypeMapEnum {
-    /**
-     * 页面
-     */
-    PAGE = 'page',
-    
-    /**
-     * 路由
-     */
-    ROUTE = 'route',
-    /**
-     * 路由
-     */
-    CONFIG = 'config',
-    /**
-     * 路由
-     */
-    INTERFACE = 'interface',
-    /**
-     * 路由
-     */
-    MODULE = 'module',
-    /**
-     * 路由
-     */
-    BASE_SERVICE = 'base_service',
-    /**
-     * 路由
-     */
-    EXTEND_SERVICE = 'extend_service',
-  } 
+  /**
+   * 页面
+   */
+  PAGE = 'page',
+  ROUTE = 'route',
+  CONFIG = 'config',
+  BASE_SERVICE = 'base_service',
+  EXTEND_SERVICE = 'extend_service',
 
-  
-export  const TYPE_MAP_SINGLE = {
-    PAGE:false,
-    ROUTE:false,
-    CONFIG:true,
-    INTERFACE:false,
-    MODULE:true,
-    BASE_SERVICE:false,
-    EXTEND_SERVICE:false
-  }
+  INTERFACE = 'interface',
+  MODULE = 'module',
+}
+
+
+export const TYPE_MAP_SINGLE = {
+  [GenTypeMapEnum.PAGE]: false,
+  [GenTypeMapEnum.ROUTE]: false,
+  [GenTypeMapEnum.CONFIG]: true,
+  [GenTypeMapEnum.INTERFACE]: false,
+  [GenTypeMapEnum.MODULE]: true,
+  [GenTypeMapEnum.BASE_SERVICE]: false,
+  [GenTypeMapEnum.EXTEND_SERVICE]: false
+}
+
+
+export const TYPE_MAP_CODE = {
+  [GenTypeMapEnum.PAGE]: 'code',
+  [GenTypeMapEnum.ROUTE]: 'code',
+  [GenTypeMapEnum.CONFIG]: 'code',
+  [GenTypeMapEnum.INTERFACE]: 'tableName',
+  [GenTypeMapEnum.MODULE]: '',
+  [GenTypeMapEnum.BASE_SERVICE]: 'tableName',
+  [GenTypeMapEnum.EXTEND_SERVICE]: 'serviceName'
+}

@@ -6,10 +6,15 @@ import {
   getServiceBatch,
 } from './utils/getSwaggerService';
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
+import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
+import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
 @Injectable()
 export class CommonService implements OnModuleInit {
   private TemplateTree;
-  constructor(private readonly dpTemplateExtendService: DpTemplateExtendService,) {}
+  constructor(
+    private readonly dpTemplateExtendService: DpTemplateExtendService,
+    private readonly dpProjectExtendService: DpProjectExtendService,
+  ) {}
   async onModuleInit() {
     this.TemplateTree = await this.dpTemplateExtendService.getTemplateTree();
   }
@@ -25,7 +30,6 @@ export class CommonService implements OnModuleInit {
     this.onModuleInit();
 
     const template = this.getTemplate(type);
-    console.log(type)
     const templateData = this.dpTemplateExtendService.runFunc(template.templateCode,context);
     
     return template.children.reduce((pre, templateItem) => {
@@ -49,9 +53,8 @@ export class CommonService implements OnModuleInit {
     }
     return list.map((item) => {
       let codeType = type;
-      if (type == 'page') {
+      if (type == GenTypeMapEnum.PAGE) {
         const configParam = JSON.parse(item.menuDetail.configParam);
-        console.log(item.menuDetail)
         codeType = configParam.code;
       }
       return {
