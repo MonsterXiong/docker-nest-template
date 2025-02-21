@@ -1,12 +1,10 @@
-
-
 import * as changeCase from 'change-case';
 import { VM } from 'vm2';
 import { parseColumnType } from './parseColumnType';
 import * as treeTool from 'src/utils/treeTool';
-
+import * as _ from 'lodash';
 export class VMRunner {
-  private static instance: VMRunner | null = null;  // 静态属性保存唯一实例
+  private static instance: VMRunner | null = null; // 静态属性保存唯一实例
   vm: VM;
 
   // 私有化构造函数防止外部 new 操作
@@ -17,7 +15,8 @@ export class VMRunner {
         utils: {
           changeCase,
           parseColumnType,
-          treeTool
+          treeTool,
+          _,
         },
         console: {
           log: (...args) => console.log(...args),
@@ -35,16 +34,21 @@ export class VMRunner {
   }
 
   run(code: string, context = {}) {
-    this.vm.sandbox.context = context;
-    const wrappedCode = `
+    try {
+      this.vm.sandbox.context = context;
+      const wrappedCode = `
       (function() {
         with(context) {
           ${code}
         }
       })()
     `;
-    const result = this.vm.run(wrappedCode);
-    this.vm.sandbox.context = {};
-    return result;
+
+      const result = this.vm.run(wrappedCode);
+      this.vm.sandbox.context = {};
+      return result;
+    } catch (error) {
+      return error.message;
+    }
   }
 }

@@ -15,6 +15,7 @@ export class DpMenuExtendService {
     async queryList(queryCondition){
         const { data: menuList, totalCount} =
         await this.dpMenuService.queryList(queryCondition);
+        
         const menuDetailList = await this.dpMenuDetailService.findAll();
         return {
             data:menuList.map((item) => {

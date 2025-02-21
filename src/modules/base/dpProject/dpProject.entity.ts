@@ -101,6 +101,19 @@ export class DpProject extends CommonEntity {
   bindProjectType: string
 
   @ApiProperty({
+    description: '所属父级',
+    example: ""
+  })
+  @Column({
+    name:'parent_id',
+    nullable: true,
+    type: 'varchar',
+    comment: '所属父级',
+    length: 32,
+  })
+  parentId: string
+
+  @ApiProperty({
     description: '所属单位',
     example: ""
   })

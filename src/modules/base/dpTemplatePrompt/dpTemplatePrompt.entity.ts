@@ -62,18 +62,46 @@ export class DpTemplatePrompt extends CommonEntity {
   englishName: string
 
   @ApiProperty({
-    description: '模板类型 | Method | Template | Params',
+    description: '生成模板类型（前端：页面、配置、路由；后端：接口）',
+    example: ""
+  })
+  @Column({
+    name:'bind_gen_template_type',
+    nullable: false,
+    type: 'varchar',
+    comment: '生成模板类型（前端：页面、配置、路由；后端：接口）',
+    default:'page',
+    length: 32,
+  })
+  bindGenTemplateType: string
+
+  @ApiProperty({
+    description: '模板类型',
     example: ""
   })
   @Column({
     name:'type',
     nullable: false,
     type: 'varchar',
-    comment: '模板类型 | Method | Template | Params',
+    comment: '模板类型',
     default:'Method',
     length: 32,
   })
   type: string
+
+  @ApiProperty({
+    description: '生成模板类别（前端后端）',
+    example: ""
+  })
+  @Column({
+    name:'bind_gen_template',
+    nullable: false,
+    type: 'varchar',
+    comment: '生成模板类别（前端后端）',
+    default:'fe_code_catehory',
+    length: 32,
+  })
+  bindGenTemplate: string
 
   @ApiProperty({
     description: '标识',

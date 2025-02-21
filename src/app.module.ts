@@ -14,12 +14,15 @@ import { GenModule } from './modules/extend/gen/gen.module';
 import { DbModule } from './modules/extend/db/db.module';
 import MODULE_LIST from './modules';
 import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
-import { GitlabModule } from './modules/extend/gitlab/gitlab.module';
 import { DpTemplateSubscriber } from './subscribers/dpTemplate.subscriber';
 import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './modules/system/tasks/tasks.module';
 import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
+import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
+import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
 
 @Module({
   imports: [
@@ -61,10 +64,13 @@ import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.m
     NavExtendModule,
     ...MODULE_LIST,
     DpProjectExtendModule,
-    GitlabModule,
     CommonModule,
     BootstrapModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
     DpMenuExtendModule,
+    DpGenModule,
+    DpTemplateExtendModule,
   ],
   providers: [
     DpTemplateSubscriber,

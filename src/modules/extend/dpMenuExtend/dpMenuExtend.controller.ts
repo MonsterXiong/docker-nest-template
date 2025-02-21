@@ -21,7 +21,7 @@ export class DpMenuExtendController {
     return this.dpMenuExtendService.deleteBatch(idList,req);
   }
 
-  @Post('queryMenuExtendDTOByCondition')
+  @Post('queryDpMenuExtendDTOByCondition')
   @ApiOperation({ summary: '查询菜单及菜单详情' })
   queryDpEnvConfig(@Body() condition:QueryCondition) {
     return this.dpMenuExtendService.queryList(condition)
@@ -33,9 +33,9 @@ export class DpMenuExtendController {
     return this.dpMenuExtendService.findOne(id);
   }
 
-  @Post('insertDpEnvConfig')
+  @Post('insertDpMenuExtend')
   @ApiOperation({ summary: '新增菜单及菜单详情' })
-  insertDpEnvConfig(@Body() entity: DpmenuExtendDto,@Req() req: Request) {
+  insertDpMenuExtend(@Body() entity: DpmenuExtendDto,@Req() req: Request) {
     return this.dpMenuExtendService.insert(entity,req);
   }
 

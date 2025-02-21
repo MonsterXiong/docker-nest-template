@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { CommonService } from './common.service';
 import { CommonController } from './common.controller';
 import { BootstrapModule } from '../bootstrap/bootstrap.module';
-import { DpTemplateModule } from 'src/modules/base/dpTemplate';
+import { DpTemplateExtendModule } from '../dpTemplateExtend/dpTemplateExtend.module';
 
 @Module({
+  imports:[BootstrapModule,DpTemplateExtendModule],
   controllers: [CommonController],
   providers: [CommonService],
-  imports:[BootstrapModule,DpTemplateModule],
   exports:[CommonService]
 })
 export class CommonModule {}

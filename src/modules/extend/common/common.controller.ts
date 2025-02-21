@@ -13,11 +13,18 @@ export class CommonController {
   @Post('translator')
   @ApiOperation({ summary: '根据name进行翻译' })
   async translator(@Query('name') name: string) {
-    return this.bootstrapService.translator(name)
+    return name
+    // return this.bootstrapService.translator(name)
   }
 
   @Get()
   @ApiOperation({ summary: '根据name进行翻译' })
+  async getInterface() {
+    return this.commonService.getSwaggerService()
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'swagger' })
   async getInterface() {
     return this.commonService.getSwaggerService()
   }
