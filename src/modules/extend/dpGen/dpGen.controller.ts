@@ -58,8 +58,7 @@ export class DpGenController {
   @Post('getProject')
   @ApiOperation({ summary: '通过项目Id获取项目数据' })
   async getProject(@Query('id') id: string) {
-    const result = await this.dpGenService.getProject(id)
-    return result || 'ok'
+    return await this.dpGenService.getProject(id)
   }
 
   @Post('genProject')

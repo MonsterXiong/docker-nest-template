@@ -22,6 +22,7 @@ export class DpGenService {
 
   ) { }
 
+  // 测试某个templateModule的运行函数
   // 测试菜单页面的运行函数
   async testPageData(templateId, menuId) {
     const templateInfo = await this.dpTemplateService.findOne(templateId)

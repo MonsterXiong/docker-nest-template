@@ -22,7 +22,7 @@ import { TasksModule } from './modules/system/tasks/tasks.module';
 import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
 import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
-
+import { WebSocketModule } from './modules/websocket/websocket.module';
 @Module({
   imports: [
     // 配置模块
@@ -70,6 +70,7 @@ import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemp
     DpMenuExtendModule,
     DpGenModule,
     DpTemplateExtendModule,
+    WebSocketModule
   ],
   providers: [
     {
