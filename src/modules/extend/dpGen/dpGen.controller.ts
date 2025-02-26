@@ -55,6 +55,18 @@ export class DpGenController {
     return this.dpGenService.getProjectRelData(id,GenTypeMapEnum.PAGE)
   }
 
+  @Post('getFePageByMenuId')
+  @ApiOperation({ summary: '通过菜单Id获取page' })
+  getPageByMenuId(@Query('menuId') menuId: string) {
+    return this.dpGenService.getMenuRelData(menuId)
+  }
+
+  @Post('genFePageByMenuId')
+  @ApiOperation({ summary: '通过菜单Id生成page' })
+  genPageByMenuId(@Query('menuId') menuId: string, @Res() res: Response) {
+    return this.dpGenService.genMenuRelData(menuId,res)
+  }
+
   @Post('getProject')
   @ApiOperation({ summary: '通过项目Id获取项目数据' })
   async getProject(@Query('id') id: string) {
@@ -76,4 +88,7 @@ export class DpGenController {
     // 处理jenkins
     return 'ok'
   }
+
+
+
 }

@@ -134,10 +134,9 @@ import {
   
     @Post('saveDpTemplatePromptBatch')
     @ApiOperation({ summary: '保存模板提示(批量)' })
-    saveDpTemplatePromptBatch(@Body() entity: DpTemplatePrompt[],@Req() req: Request) {
-      return this.dpTemplatePromptService.saveBatch(entity,req); 
+    saveDpTemplatePromptBatch(@Body() obj: any,@Req() req: Request) {
+      return this.dpTemplatePromptService.saveBatch(obj.newDTOList,obj.oldDTOIdList,req); 
     }
-  
     @Post('updateDpTemplatePrompt')
     @ApiOperation({ summary: '修改模板提示' })
     updateDpTemplatePrompt(@Body() entity: DpTemplatePrompt,@Req() req: Request) {

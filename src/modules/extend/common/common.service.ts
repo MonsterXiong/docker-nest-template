@@ -8,22 +8,40 @@ import {
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
 import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
 import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
+import { DpTemplatePromptService } from 'src/modules/base/dpTemplatePrompt';
+import { formatObject } from './utils/formatObject'
+import QueryConditionBuilder from 'src/utils/queryCondition';
 @Injectable()
 export class CommonService implements OnModuleInit {
-  private TemplateTree;
+  private TEMPLATE_TREE;
+  private TEMPLATE_PROMPT;
   constructor(
     private readonly dpTemplateExtendService: DpTemplateExtendService,
     private readonly dpProjectExtendService: DpProjectExtendService,
+    private readonly dpTemplatePromptService: DpTemplatePromptService,
   ) {}
   async onModuleInit() {
-    this.TemplateTree = await this.dpTemplateExtendService.getTemplateTree();
+    this.TEMPLATE_TREE = await this.dpTemplateExtendService.getTemplateTree();
+    this.TEMPLATE_PROMPT = await this._getTemplatePrompList()
   }
 
-
+  async _getTemplatePrompList(){
+    const queryCondition = QueryConditionBuilder.getInstanceNoPage()
+    queryCondition.buildEqualQuery('type','Template')
+    const { data } =  await this.dpTemplatePromptService.queryList(queryCondition)
+    return data
+  }
   getTemplate(type){
-    return this.TemplateTree.find((item) => item.code === type);
+    return this.TEMPLATE_TREE.find((item) => item.code === type);
   }
 
+  _genTemplateFunc(){
+    const returnStr = `\r\nreturn { ${this.TEMPLATE_PROMPT.map(item=>item.code).join(',')}}`
+    const funcStr = this.TEMPLATE_PROMPT.map(item=>item.value+'\n').join('')+returnStr
+    const templateFunc = this.dpTemplateExtendService.runFunc(funcStr,{});
+    console.log(templateFunc);
+    return templateFunc
+  }
 
   _genCode(type, context) {
     // todo:优化 可删除
@@ -31,11 +49,12 @@ export class CommonService implements OnModuleInit {
 
     const template = this.getTemplate(type);
     const templateData = this.dpTemplateExtendService.runFunc(template.templateCode,context);
+    const templateFunc = this._genTemplateFunc()
     
     return template.children.reduce((pre, templateItem) => {
       if (templateItem.templateCode) {
         pre.push({
-          code: ejs.render(templateItem.templateCode, templateData),
+          code: ejs.render(templateItem.templateCode, {...templateData,TEMPLATE_UTILS:{...templateFunc,formatObject}}),
           filePath: templateItem.filePath,
           fileExt: templateItem.templateExt,
         });

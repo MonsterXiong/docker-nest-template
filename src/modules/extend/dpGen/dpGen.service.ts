@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DpEnvConfigService } from 'src/modules/base/dpEnvConfig';
 import { DpMenuExtendService } from 'src/modules/extend/dpMenuExtend/dpMenuExtend.service';
-import { DbService } from '../db';
 import { CommonService } from 'src/modules/extend/common/common.service';
 import { GenTypeMapEnum, TYPE_MAP_CODE, TYPE_MAP_SINGLE } from 'src/enums/genTypeMap.enum';
 import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
@@ -10,10 +8,12 @@ import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.se
 import { outputCode } from 'src/utils/outputCode';
 import { listToTree } from 'src/utils/treeTool';
 import { format } from './dbGen.utils';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class DpGenService {
   constructor(
+    private moduleRef:ModuleRef,
     private readonly dpMenuExtendService: DpMenuExtendService,
     private readonly commonService: CommonService,
     private readonly dpProjectExtendService: DpProjectExtendService,
@@ -39,6 +39,28 @@ export class DpGenService {
     return outputCode(res, result, type)
   }
 
+  async getMenuRelData(id){
+    if(!id){
+      return '菜单Id不存在'
+    }
+    const menu = await this.dpMenuExtendService.findOne(id)
+    if(!menu || menu.type == 'module'){
+      console.log('当前为模块');
+      return []
+    }
+    const projectInfo = await this.dpProjectExtendService.getProjectInfo(menu.bindProject)
+    const IS_SINGLE = TYPE_MAP_SINGLE[GenTypeMapEnum.PAGE]
+    const result = this.commonService.getCode(projectInfo, [menu], GenTypeMapEnum.PAGE, IS_SINGLE)
+    return result
+  }
+
+  async genMenuRelData(id,res){
+    const result = await  this.getMenuRelData(id)
+    const TRANS_CODE = TYPE_MAP_CODE[GenTypeMapEnum.PAGE]
+    const IS_SINGLE = TYPE_MAP_SINGLE[GenTypeMapEnum.PAGE]
+    return outputCode(res, format(result, IS_SINGLE, TRANS_CODE), GenTypeMapEnum.PAGE)
+  }
+
   async getProjectRelData(id, type){
     const projectInfo = await this.dpProjectExtendService.getProjectInfo(id)
     const IS_SINGLE = TYPE_MAP_SINGLE[type]
@@ -55,6 +77,9 @@ export class DpGenService {
     }
     if (type === GenTypeMapEnum.ROUTE) {
       paramsData = listToTree(paramsData)
+    }
+    if (type === GenTypeMapEnum.PAGE) {
+      paramsData = paramsData.filter(item=>item.type == 'page')
     }
     if(!paramsData){
       console.log(`不存在paramsData----------${type}`)

@@ -119,7 +119,7 @@ function getSortCode(sortParams) {
 function getCode(params) {
   const { conditionParams, sortParams, pageNumber, pageSize } = params
   let code = ".where('sys_is_del = :sysIsDel',{sysIsDel: '0'})"
-  if (conditionParams.length || sortParams.length) {
+  if (conditionParams?.length || sortParams?.length) {
     code += getFilterCode(conditionParams)
     code += getSortCode(sortParams)
     // code+=getPageCode({pageNumber,pageSize})
