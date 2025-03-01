@@ -1,17 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { DpMenuExtendService } from 'src/modules/extend/dpMenuExtend/dpMenuExtend.service';
 import { CommonService } from 'src/modules/extend/common/common.service';
-import { GenTypeMapEnum, TYPE_MAP_CODE, TYPE_MAP_SINGLE } from 'src/enums/genTypeMap.enum';
+import { GenTypeMapEnum, GEN_TYPE_CONFIG } from 'src/enums/genTypeMap.enum';
 import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
 import { DpTemplateService } from 'src/modules/base/dpTemplate';
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
 import { outputCode } from 'src/utils/outputCode';
 import { listToTree } from 'src/utils/treeTool';
-import { format } from './dbGen.utils';
+import { formatByType, CodeItem, FormattedFile } from './dbGen.utils';
 import { ModuleRef } from '@nestjs/core';
+
+// 定义数据适配器接口
+interface IDataAdapter {
+  getParamsData(projectId: string): Promise<any>;
+  processData(data: any): any;
+}
+// 定义生成结果类型
+interface GenerationResult {
+  fe: any[];
+  be: any[];
+}
+
 
 @Injectable()
 export class DpGenService {
+   // 数据适配器映射
+   private readonly dataAdapters: Record<GenTypeMapEnum, IDataAdapter>;
   constructor(
     private moduleRef:ModuleRef,
     private readonly dpMenuExtendService: DpMenuExtendService,
@@ -20,108 +34,192 @@ export class DpGenService {
     private readonly dpTemplateService: DpTemplateService,
     private readonly dpTemplateExtendService: DpTemplateExtendService
 
-  ) { }
-
-  // 测试某个templateModule的运行函数
-  // 测试菜单页面的运行函数
-  async testPageData(templateId, menuId) {
-    const templateInfo = await this.dpTemplateService.findOne(templateId)
-    const menuInfo = await this.dpMenuExtendService.findOne(menuId)
-    const PROJECT_INFO = await this.dpProjectExtendService.getProjectInfo(menuInfo.bindProject)
-    const result = this.dpTemplateExtendService.runFunc(templateInfo.templateCode, {
-      PROJECT_INFO,
-      PARAMS: menuInfo
-    })
-    return result
-  }
-  async genProjectRelData(id, type, res) {
-    const result = await this.getProjectRelData(id, type)
-    return outputCode(res, result, type)
+  ) { 
+    // 初始化数据适配器
+    this.dataAdapters = this.initDataAdapters();
   }
 
-  async getMenuRelData(id){
-    if(!id){
-      return '菜单Id不存在'
-    }
-    const menu = await this.dpMenuExtendService.findOne(id)
-    if(!menu || menu.type == 'module'){
-      console.log('当前为模块');
-      return []
-    }
-    const projectInfo = await this.dpProjectExtendService.getProjectInfo(menu.bindProject)
-    const IS_SINGLE = TYPE_MAP_SINGLE[GenTypeMapEnum.PAGE]
-    const result = this.commonService.getCode(projectInfo, [menu], GenTypeMapEnum.PAGE, IS_SINGLE)
-    return result
-  }
-
-  async genMenuRelData(id,res){
-    const result = await  this.getMenuRelData(id)
-    const TRANS_CODE = TYPE_MAP_CODE[GenTypeMapEnum.PAGE]
-    const IS_SINGLE = TYPE_MAP_SINGLE[GenTypeMapEnum.PAGE]
-    return outputCode(res, format(result, IS_SINGLE, TRANS_CODE), GenTypeMapEnum.PAGE)
-  }
-
-  async getProjectRelData(id, type){
-    const projectInfo = await this.dpProjectExtendService.getProjectInfo(id)
-    const IS_SINGLE = TYPE_MAP_SINGLE[type]
-    const TRANS_CODE = TYPE_MAP_CODE[type]
-    let paramsData = null
-    if ([GenTypeMapEnum.MODULE,GenTypeMapEnum.BASE_SERVICE, GenTypeMapEnum.INTERFACE].includes(type)) {
-      paramsData = await this.dpProjectExtendService.getTableAndColumnByProjectId(id)
-    } else if ([GenTypeMapEnum.PAGE,GenTypeMapEnum.ROUTE].includes(type)) {
-      paramsData = await this.dpProjectExtendService.getMenu(id)
-    }else if (type === GenTypeMapEnum.CONFIG) {
-      paramsData = await this.dpProjectExtendService.getEnvConfig(id)
-    }else if(type === GenTypeMapEnum.EXTEND_SERVICE){
-      // paramsData = await this.commonService.getSwaggerService()
-    }
-    if (type === GenTypeMapEnum.ROUTE) {
-      paramsData = listToTree(paramsData)
-    }
-    if (type === GenTypeMapEnum.PAGE) {
-      paramsData = paramsData.filter(item=>item.type == 'page')
-    }
-    if(!paramsData){
-      console.log(`不存在paramsData----------${type}`)
-      return []
-    }
-    const result = this.commonService.getCode(projectInfo, paramsData, type, IS_SINGLE)
-    return format(result, IS_SINGLE, TRANS_CODE)
-  }
-  // 通过项目id生成项目数据
-  async genProject(id, res) {
-    const projectData = await this.getProject(id)
-    // sql文件 以及插入指定数据库
-    // zip解压到相对文件夹
-    // 解压前端目录
-    // 前端数据生成 =>拼接前端目录
-    // 解压后端目录
-    // 后端数据生成 =>拼接后端目录
-    return outputCode(res, projectData.fe, 'project')
-  }
-  // 通过项目id获取项目数据
-  async getProject(id) {
-    const genRequest = []
-    for (const key in GenTypeMapEnum) {
-      genRequest.push(this.getProjectRelData(id, GenTypeMapEnum[key]))
-    }
-    const [pageList, routeList, envConfigList, serviceList,extendServiceList,interfaceList,moduleList] = await Promise.all(genRequest)
-
-    // 生成env数据 todo:config数据=>还需要完善
-    // todo:生成枚举
+  /**
+   * 初始化各类型的数据适配器
+   */
+  private initDataAdapters(): Record<GenTypeMapEnum, IDataAdapter> {
     return {
-      fe: [
-        ...pageList,
-        ...routeList,
-        ...envConfigList,
-        ...serviceList,
-        ...extendServiceList
-      ],
-      be: [
-        ...interfaceList,
-        ...moduleList
-      ]
-    }
+      [GenTypeMapEnum.MODULE]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getTableAndColumnByProjectId(projectId),
+        processData: (data: any) => data
+      },
+      [GenTypeMapEnum.BASE_SERVICE]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getTableAndColumnByProjectId(projectId),
+        processData: (data: any) => data
+      },
+      [GenTypeMapEnum.INTERFACE]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getTableAndColumnByProjectId(projectId),
+        processData: (data: any) => data
+      },
+      [GenTypeMapEnum.PAGE]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getMenu(projectId),
+        processData: (data: any) => data.filter(item => item.type === 'page')
+      },
+      [GenTypeMapEnum.ROUTE]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getMenu(projectId),
+        processData: (data: any) => listToTree(data)
+      },
+      [GenTypeMapEnum.CONFIG]: {
+        getParamsData: (projectId: string) => this.dpProjectExtendService.getEnvConfig(projectId),
+        processData: (data: any) => data
+      },
+      [GenTypeMapEnum.EXTEND_SERVICE]: {
+        getParamsData: () => Promise.resolve([]), // 暂未实现
+        processData: (data: any) => data
+      }
+    };
+  }
+ /**
+   * 测试模板运行函数
+   * @param templateId 模板ID
+   * @param menuId 菜单ID
+   * @returns 模板运行结果
+   */
+ async testPageData(templateId: string, menuId: string): Promise<any> {
+  const templateInfo = await this.dpTemplateService.findOne(templateId);
+  const menuInfo = await this.dpMenuExtendService.findOne(menuId);
+  const projectInfo = await this.dpProjectExtendService.getProjectInfo(menuInfo.bindProject);
+  
+  return this.dpTemplateExtendService.runFunc(templateInfo.templateCode, {
+    PROJECT_INFO: projectInfo,
+    PARAMS: menuInfo
+  });
+}
+/**
+   * 生成项目相关数据并输出
+   * @param id 项目ID
+   * @param type 生成类型
+   * @param res 响应对象
+   * @returns 输出结果
+   */
+async genProjectRelData(id: string, type: GenTypeMapEnum, res: Response): Promise<any> {
+  const result = await this.getProjectRelData(id, type);
+  return outputCode(res, result, type);
+}
 
+/**
+   * 获取菜单相关数据
+   * @param id 菜单ID
+   * @returns 菜单相关数据
+   */
+async getMenuRelData(id: string): Promise<any> {
+  if (!id) {
+    return '菜单Id不存在';
+  }
+  
+  const menu = await this.dpMenuExtendService.findOne(id);
+  if (!menu || menu.type === 'module') {
+    console.log('当前为模块');
+    return [];
+  }
+  
+  const projectInfo = await this.dpProjectExtendService.getProjectInfo(menu.bindProject);
+  return this.commonService.getCode(projectInfo, [menu], GenTypeMapEnum.PAGE, GEN_TYPE_CONFIG[GenTypeMapEnum.PAGE].isSingle);
+}
+
+/**
+ * 生成菜单相关数据并输出
+ * @param id 菜单ID
+ * @param res 响应对象
+ * @returns 输出结果
+ */
+async genMenuRelData(id: string, res: Response): Promise<any> {
+  const result = await this.getMenuRelData(id);
+  // 使用新的formatByType函数，直接传入生成类型
+  const formattedResult = formatByType(result, GenTypeMapEnum.PAGE);
+  return outputCode(res, formattedResult, GenTypeMapEnum.PAGE);
+}
+
+  /**
+   * 获取项目相关数据
+   * @param id 项目ID
+   * @param type 生成类型
+   * @returns 项目相关数据
+   */
+  async getProjectRelData(id: string, type: GenTypeMapEnum): Promise<any> {
+    const projectInfo = await this.dpProjectExtendService.getProjectInfo(id);
+     // 使用适配器获取并处理数据
+  const adapter = this.dataAdapters[type];
+    if (!adapter) {
+      console.log(`不支持的生成类型: ${type}`);
+      return [];
+    }
+    
+    let paramsData = await adapter.getParamsData(id);
+    if (!paramsData) {
+      console.log(`不存在paramsData----------${type}`);
+      return [];
+    }
+    paramsData = adapter.processData(paramsData);
+    const result = this.commonService.getCode(
+      projectInfo, 
+      paramsData, 
+      type, 
+      GEN_TYPE_CONFIG[type].isSingle
+    );
+    
+    // 使用新的formatByType函数，直接传入生成类型
+    return formatByType(result, type);
+  }
+
+  /**
+   * 通过项目ID生成项目数据并输出
+   * @param id 项目ID
+   * @param res 响应对象
+   * @returns 输出结果
+   */
+  async genProject(id: string, res: Response): Promise<any> {
+    const projectData = await this.getProject(id);
+    // TODO: 
+    // - sql文件以及插入指定数据库
+    // - zip解压到相对文件夹
+    // - 解压前端目录
+    // - 前端数据生成 =>拼接前端目录
+    // - 解压后端目录
+    // - 后端数据生成 =>拼接后端目录
+    return outputCode(res, projectData.fe, 'project');
+  }
+
+  /**
+   * 通过项目ID获取项目数据
+   * @param id 项目ID
+   * @returns 项目数据
+   */
+  async getProject(id: string): Promise<GenerationResult> {
+    const genRequests = Object.values(GenTypeMapEnum).map(type => 
+      this.getProjectRelData(id, type)
+    );
+    
+    const results = await Promise.all(genRequests);
+    
+    // 按类型分组结果
+    const feTypes = [
+      GenTypeMapEnum.PAGE, 
+      GenTypeMapEnum.ROUTE, 
+      GenTypeMapEnum.CONFIG, 
+      GenTypeMapEnum.BASE_SERVICE,
+      GenTypeMapEnum.EXTEND_SERVICE
+    ];
+    
+    const feResults = [];
+    const beResults = [];
+    
+    Object.values(GenTypeMapEnum).forEach((type, index) => {
+      if (feTypes.includes(type)) {
+        feResults.push(...results[index]);
+      } else {
+        beResults.push(...results[index]);
+      }
+    });
+
+    return {
+      fe: feResults,
+      be: beResults
+    };
   }
 }
