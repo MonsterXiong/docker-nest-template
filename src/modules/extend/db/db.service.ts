@@ -2,10 +2,13 @@ import { Injectable, OnModuleInit, OnModuleDestroy, HttpException, HttpStatus } 
 import { createPool, Pool, PoolConnection, RowDataPacket } from 'mysql2/promise';
 import { DatabaseConfigDto, TableSchemaDto, ColumnSchemaDto } from '../../../shared/dto/database.dto';
 import { ColumnInfo } from '../../../interfaces/db.interface';
-import { DbUtils } from './db.utils';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DbService implements OnModuleInit, OnModuleDestroy {
+
+constructor(private readonly configService: ConfigService,){}
+
   private pools: Map<string, Pool> = new Map();
 
   // 初始化连接池
@@ -53,6 +56,30 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
       connection.release();
     }
   }
+
+  getLocolDbConfig():DatabaseConfigDto{
+    return {
+      host: this.configService.get('DB_HOST'),
+      port: this.configService.get('DB_PORT'),
+      user: this.configService.get('DB_USER'),
+      password: this.configService.get('DB_PASSWORD'),
+      database: this.configService.get('DB_NAME'),
+      type:'mysql',
+    }
+
+  }
+
+    // 执行数据库操作的通用方法
+  async execute<T>(
+      operation: (connection: PoolConnection) => Promise<T>
+    ): Promise<T> {
+      const connection = await this.getConnection(this.getLocolDbConfig());
+      try {
+        return await operation(connection);
+      } finally {
+        connection.release();
+      }
+    }
 
   // 获取表的基本信息
   private async queryTableBaseInfo(

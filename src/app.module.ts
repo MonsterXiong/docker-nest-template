@@ -26,6 +26,7 @@ import { DatabaseModule } from './modules/extend/database/databse.module.ts';
 import { ServiceController } from './service.controller';
 import { ServiceModule } from './service.module';
 // import { WebSocketModule } from './modules/websocket/websocket.module';
+import { DpMetaDatabaseExtendModule } from './modules/extend/dpMetaDatabaseExtend/dpMetaDatabaseExtend.module';
 @Module({
   imports: [
     // 配置模块
@@ -74,7 +75,8 @@ import { ServiceModule } from './service.module';
     DpGenModule,
     DpTemplateExtendModule,
     DatabaseModule,
-    // ServiceModule
+    ServiceModule,
+    DpMetaDatabaseExtendModule,
     // WebSocketModule
   ],
   providers: [

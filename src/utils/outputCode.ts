@@ -4,8 +4,7 @@ import path from 'path';
 import archiver from 'archiver';
 import fs from 'fs';
 
-export async function outputCode(res, codeData,type) {
-    const projectPath = './temp'
+export async function outputCode(res, codeData,type,projectPath="./temp") {
     await writeCode(projectPath,codeData)
     return await downloadCodeFile(projectPath,res,type)
   }
@@ -64,11 +63,12 @@ async function genCode(result) {
     });
   }
 
-  async function uncompress(source, targetDir) {
+export  async function uncompress(source, targetDir) {
+    fse.ensureDirSync(targetDir);
     return await compressing.zip.uncompress(source, targetDir);
   }
 
-  function compress(source, target) {
+  export  function compress(source, target) {
     // 创建 archiver 实例
     const archive = archiver('zip', {
       zlib: { level: 9 }, // 设置压缩级别（可选）

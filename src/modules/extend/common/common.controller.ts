@@ -25,4 +25,10 @@ export class CommonController {
     return genCodeBatch(serviceList)
     // return this.commonService.getSwaggerService()
   }
+
+  @Get('test')
+  @ApiOperation({ summary: '测试服务器' })
+  async test() {
+    return this.commonService.test()
+  }
 }

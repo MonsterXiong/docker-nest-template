@@ -1,6 +1,7 @@
-import { Module, Global } from '@nestjs/common';
+import { Module, Global, forwardRef } from '@nestjs/common';
 import { DbService } from './db.service';
 import { DbController } from './db.controller';
+import { CommonModule } from '../common/common.module';
 
 /**
  * 数据库管理模块

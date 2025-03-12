@@ -5,7 +5,9 @@ import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.servi
 import { handleGit } from 'src/utils/autoDeploy';
 import { handleCode } from 'src/utils/git';
 import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
-
+import { outputCode, uncompress } from 'src/utils/outputCode';
+import path from 'path';
+import * as os from 'os'
 @Controller('dpGen')
 export class DpGenController {
   constructor(
@@ -20,7 +22,7 @@ export class DpGenController {
   }
 
   @Post('genFeService')
-  @ApiOperation({ summary: '通过项目Id生成service' })
+  @ApiOperation({ summary: '通过项目Id生成base_service' })
   genService(@Query('id') id: string, @Res() res: Response) {
     return this.dpGenService.genProjectRelData(id,GenTypeMapEnum.BASE_SERVICE,res)
   }
@@ -87,8 +89,16 @@ export class DpGenController {
 
   @Post('genProject')
   @ApiOperation({ summary: '通过项目Id生成项目' })
-  genProject(@Query('id') id: string, @Res() res: Response) {
-    return this.dpGenService.genFeProject(id,res)
+  async genProject(@Query('id') id: string, @Res() res: Response) {
+    const projectData = await this.dpGenService.genFeProject(id)
+
+
+    const projectPath = path.join(os.homedir(),'.monster_dp/temp')
+    
+    await uncompress('public/framework.fe.zip', projectPath)
+    // 解压到当前目录
+
+    return outputCode(res, projectData.fe, 'project',projectPath);
   }
 
   @Get()
@@ -121,25 +131,26 @@ export class DpGenController {
 
   @Post('handleGit')
   @ApiOperation({ summary: '通过项目Id操作Git' })
-  async handleGit(@Query('id') id: string, @Res() res: Response){
-    return await this.dpGenService.handlePrepare(id,'git',res)
+  async handleGit1(@Query('id') id: string){
+    return await this.dpGenService.handlePrepare(id,'git')
   }
 
   @Post('handleJenkins')
   @ApiOperation({ summary: '通过项目Id操作Jenkins' })
-  async handleJenkins(@Query('id') id: string, @Res() res: Response){
-    return await this.dpGenService.handlePrepare(id,'jenkins',res)
+  async handleJenkins(@Query('id') id: string){
+    return await this.dpGenService.handlePrepare(id,'jenkins')
   }
 
   @Post('handleBuildScript')
   @ApiOperation({ summary: '通过项目Id操作打包脚本' })
-  async handleBuildScript(@Query('id') id: string, @Res() res: Response){
-    return await this.dpGenService.handlePrepare(id,'buildScript',res)
+  async handleBuildScript(@Query('id') id: string){
+    return await this.dpGenService.handlePrepare(id,'buildScript')
   }
 
   @Post('handleHomeNav')
   @ApiOperation({ summary: '通过项目Id操作首页导航' })
-  async handleHomeNav(@Query('id') id: string, @Res() res: Response){
-    return await this.dpGenService.handlePrepare(id,'homeNav',res)
+  async handleHomeNav(@Query('id') id: string){
+    return await this.dpGenService.handlePrepare(id,'homeNav')
   }
+
 }

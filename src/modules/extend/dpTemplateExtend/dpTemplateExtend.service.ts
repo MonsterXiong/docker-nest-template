@@ -1,14 +1,22 @@
 import {  Injectable } from '@nestjs/common';
 import { DpTemplateService } from 'src/modules/base/dpTemplate';
-import { buildTemplateTree } from './utils/buildTemplateTree';
+import { buildTemplateTree, handleProceeQuote } from './utils/buildTemplateTree';
 import { VMRunner } from './utils/VMRunner';
 import { findTreeByArr, refreshFlatIds } from 'src/utils/findTreeByArr';
+import { listToPathMap } from './utils/listToPathMap';
 @Injectable()
 export class DpTemplateExtendService {
   constructor(private readonly dpTemplateService: DpTemplateService) {}
   async getTemplateTree() {
     const templateList = await this.dpTemplateService.findAll();
-    return buildTemplateTree(templateList);
+    const templateModuleTree = buildTemplateTree(templateList)
+    return handleProceeQuote(templateModuleTree);
+  }
+
+  async getTemplateMap() {
+    const templateList = await this.dpTemplateService.findAll();
+    const list = templateList.filter(item => item.templateType !== 'category')
+    return listToPathMap(list)
   }
 
   async copyTemplate(templateId,targetId,req){
@@ -19,8 +27,8 @@ export class DpTemplateExtendService {
     return list
   }
 
-  runFunc(templateCode, context) {
-    const result = VMRunner.getInstance().run(templateCode, context);
+  runFunc(templateCode, context,options={}) {
+    const result = VMRunner.getInstance(options).run(templateCode, context);
     return result;
   }
 }

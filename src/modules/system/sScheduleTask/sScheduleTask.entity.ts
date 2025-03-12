@@ -5,10 +5,10 @@ import { nanoid } from 'nanoid';
 import { format } from 'date-fns';
 
 @Entity({
-    name: 's_task',
+    name: 's_schedule_task',
     comment: '定时任务'
 })
-export class Task extends CommonEntity {
+export class SScheduleTask extends CommonEntity {
     @ApiProperty({
         description: '主键',
         example: ""

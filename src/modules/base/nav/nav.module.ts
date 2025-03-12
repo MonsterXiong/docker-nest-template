@@ -8,6 +8,6 @@ import { Nav } from './nav.entity';
   imports: [TypeOrmModule.forFeature([Nav])],
   controllers: [NavController],
   providers: [NavService],
-  exports:[NavService]
+  exports:[NavService,TypeOrmModule.forFeature([Nav])]
 })
 export class NavModule { }

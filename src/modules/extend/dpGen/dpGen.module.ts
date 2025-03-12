@@ -12,7 +12,7 @@ import { DpTemplateExtendModule } from '../dpTemplateExtend/dpTemplateExtend.mod
     CommonModule,
     DpMenuExtendModule,
     DpProjectExtendModule,
-    DpTemplateExtendModule
+    DpTemplateExtendModule,
   ],
   controllers: [DpGenController],
   providers: [DpGenService],

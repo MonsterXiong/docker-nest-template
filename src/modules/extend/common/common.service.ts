@@ -1,4 +1,8 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationBootstrap,
+  OnModuleInit,
+} from '@nestjs/common';
 import * as ejs from 'ejs';
 import {
   getGroupList,
@@ -7,32 +11,65 @@ import {
 } from './utils/getSwaggerService';
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
 import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
-import { DpProjectExtendService } from '../dpProjectExtend/dpProjectExtend.service';
 import { DpTemplatePromptService } from 'src/modules/base/dpTemplatePrompt';
 import { formatObject } from './utils/formatObject';
 import QueryConditionBuilder from 'src/utils/queryCondition';
+import { formatColumnType } from './utils/formatColumnType';
+import { RenderEngine } from './utils/renderEngine';
+import { ConfigService } from '@nestjs/config';
+import { SSHClient } from 'src/utils/ssh';
 @Injectable()
-export class CommonService implements OnModuleInit {
+export class CommonService implements OnApplicationBootstrap {
   private TEMPLATE_TREE;
   private TEMPLATE_PROMPT;
+  private TEMPLATE_MAP;
+  private TEMPLATE_METHOD;
   constructor(
+    private readonly configService: ConfigService,
     private readonly dpTemplateExtendService: DpTemplateExtendService,
-    private readonly dpProjectExtendService: DpProjectExtendService,
     private readonly dpTemplatePromptService: DpTemplatePromptService,
   ) {}
-  async onModuleInit() {
+  async onApplicationBootstrap() {
+    console.log('缓存模板数据');
     this.TEMPLATE_TREE = await this.dpTemplateExtendService.getTemplateTree();
-    this.TEMPLATE_PROMPT = await this._getTemplatePrompList();
+    this.TEMPLATE_MAP = await this.dpTemplateExtendService.getTemplateMap();
+    this.TEMPLATE_PROMPT = await this._getTemplatePrompListByType('Template');
+    this.TEMPLATE_METHOD =
+      await this._getTemplatePrompListByType('TemplateMethod');
   }
-
-  async _getTemplatePrompList() {
+  async _getTemplatePrompListByType(type) {
     const queryCondition = QueryConditionBuilder.getInstanceNoPage();
-    queryCondition.buildEqualQuery('type', 'Template');
+    queryCondition.buildEqualQuery('type', type);
     const { data } =
       await this.dpTemplatePromptService.queryList(queryCondition);
     return data;
   }
   getTemplate(type) {
+    return this.TEMPLATE_TREE.find((item) => item.code === type);
+  }
+
+  commonParse(type, data) {
+    const templateCode = this.getTemplate(type).templateCode;
+    const templateData = this.dpTemplateExtendService.runFunc(
+      templateCode,
+      data,
+    );
+    return templateData || {};
+    // return {}
+  }
+
+  commonParseMethod(type, data) {
+    const templateCode = this.getTemplate(type).templateCode;
+    
+    const templateData = this.dpTemplateExtendService.runFunc(
+      templateCode,
+      data,
+    );
+    return templateData
+  }
+
+
+  getTemplateFile(type) {
     return this.TEMPLATE_TREE.find((item) => item.code === type);
   }
 
@@ -61,29 +98,42 @@ export class CommonService implements OnModuleInit {
     };
   }
 
-  _gen(templateItem,templateData,templateFunc){
-      let code = ejs.render(templateItem.templateCode, {
-        ...templateData,
-        TEMPLATE_UTILS: { ...templateFunc, formatObject },
-      });
-      return {
-        code:this._cleanCode(code),
-        ...this._formatResult(templateItem),
-      }
+  // _gen(templateItem,option) {
+  //   let code = ejs.render(templateItem.templateCode, option);
+  //   return {
+  //     code: this._cleanCode(code),
+  //     ...this._formatResult(templateItem),
+  //   };
+  // }
+
+  _gen(templateItem, option) {
+    const renderEngine = new RenderEngine(this.TEMPLATE_MAP);
+    let code = renderEngine.render(templateItem.pathKey, option);
+    return {
+      code: this._cleanCode(code),
+      ...this._formatResult(templateItem),
+    };
   }
 
   _genCode(type, context) {
-    // todo:优化 可删除
-    this.onModuleInit();
     const template = this.getTemplate(type);
     const templateData = this.dpTemplateExtendService.runFunc(
-        template.templateCode,
-        context,
+      template.templateCode,
+      context,
+      {
+        COMMON_PARSE:(type,data)=>this.commonParseMethod(type,data)
+      }
     );
     const templateFunc = this._genTemplateFunc();
     return template.children.reduce((pre, templateItem) => {
       if (templateItem.templateType !== 'dir') {
-        const result = this._gen(templateItem,templateData,templateFunc)
+        const result = this._gen(templateItem, {
+          ...templateData,
+          // sql方法
+          helpers: { formatColumnType },
+          TEMPLATE_UTILS: { ...templateFunc, formatObject },
+          COMMON_PARSE: (type, data) => this.commonParse(type, data),
+        });
         pre.push(result);
       }
       return pre;
@@ -91,6 +141,8 @@ export class CommonService implements OnModuleInit {
   }
 
   getCode(projectInfo, list, type, isSingle = false) {
+     // todo:优化 可删除
+    this.onApplicationBootstrap();
     if (isSingle) {
       return this._genCode(type, {
         PROJECT_INFO: projectInfo,
@@ -108,6 +160,7 @@ export class CommonService implements OnModuleInit {
         children: this._genCode(codeType, {
           PROJECT_INFO: projectInfo,
           PARAMS: item,
+          // 将模板中的方法体传入进来
         }),
       };
     });
@@ -122,5 +175,29 @@ export class CommonService implements OnModuleInit {
     const groupList = await getGroupList(params);
     let serviceList = await getServiceBatch(params.baseUrl, groupList);
     return serviceList;
+  }
+  getServerConfig() {
+    return {
+      host: this.configService.get('SERVER_HOST'),
+      port: this.configService.get('SERVER_PORT'),
+      username: this.configService.get('SERVER_USERNAME'),
+      password: this.configService.get('SERVER_PASSWORD'),
+    };
+  }
+
+  // 连接服务器
+  async test(){
+    const ssh = new SSHClient(this.getServerConfig())
+    try {
+      // 连接服务器
+      await ssh.connect()
+      console.log('执行ls -la命令:');
+      const result:any = await ssh.executeCommand('/usr/local/monster/autoDeploy.sh')
+      return result.stdout
+    } catch (error) {
+      console.error('发生错误:',error);
+    }finally{
+      ssh.disconnect()
+    }
   }
 }

@@ -9,7 +9,9 @@ export class VMRunner {
   vm: VM;
 
   // 私有化构造函数防止外部 new 操作
-  private constructor() {
+  private constructor(options={}) {
+    console.log(options,'XXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxx');
+    
     this.vm = new VM({
       timeout: 1000,
       sandbox: {
@@ -19,6 +21,7 @@ export class VMRunner {
           treeTool,
           getParams,
           _,
+          ...options
         },
         console: {
           log: (...args) => console.log(...args),
@@ -28,9 +31,9 @@ export class VMRunner {
   }
 
   // 静态方法获取单例
-  public static getInstance(): VMRunner {
+  public static getInstance(options={}): VMRunner {
     if (!VMRunner.instance) {
-      VMRunner.instance = new VMRunner();
+      VMRunner.instance = new VMRunner(options);
     }
     return VMRunner.instance;
   }

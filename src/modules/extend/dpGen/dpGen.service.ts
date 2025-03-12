@@ -71,6 +71,7 @@ export class DpGenService {
     );
     return result;
   }
+  
   async genProjectRelData(id, type, res) {
     if (!id) {
       return '项目Id不存在';
@@ -167,7 +168,7 @@ export class DpGenService {
     return format(result, IS_SINGLE, TRANS_CODE);
   }
   // 通过项目id生成项目数据
-  async genFeProject(id, res) {
+  async genFeProject(id) {
     const projectData = await this.getFeProject(id);
     // sql文件 以及插入指定数据库
     // zip解压到相对文件夹
@@ -175,7 +176,8 @@ export class DpGenService {
     // 前端数据生成 =>拼接前端目录
     // 解压后端目录
     // 后端数据生成 =>拼接后端目录
-    return outputCode(res, projectData.fe, 'project');
+    // return outputCode(res, projectData.fe, 'project');
+    return projectData
   }
   // 通过项目id获取项目数据
   async getFeProject(id) {
@@ -212,22 +214,21 @@ export class DpGenService {
     // 开始调用四大流程,并返回对应信息来更新项目或项目详情数据
   }
 
-  async handlePrepare(id, type, res) {
+  async handlePrepare(id, type) {
     //  应该是获取当前项目以及所有子级
     const projectList = await this.dpProjectExtendService.getProject();
     const currentProjectList = findTreeByArr(projectList,id)
-    const projectInfo = listToTree(currentProjectList)
-    console.log(projectInfo);
-    
-    // if (type == 'git') {
-    //   return await handleGit(projectInfo);
-    // } else if (type == 'jenkins') {
-    //   return await this.handleJenkins(projectInfo);
-    // } else if (type == 'buildScript') {
-    //   return await this.handleBuildScript(projectInfo);
-    // } else if (type == 'homeNav') {
-    //   return await this.handleHomeNav(projectInfo);
-    // }
+    const projectInfo = listToTree(currentProjectList)[0]
+    if (type == 'git') {
+      return await handleGit(projectInfo);
+    } else if (type == 'jenkins') {
+      return await this.handleJenkins(projectInfo);
+    } else if (type == 'buildScript') {
+      return await this.handleBuildScript(projectInfo);
+    } else if (type == 'homeNav') {
+      return await this.handleHomeNav(projectInfo);
+    }
+    return projectInfo
   }
 
   // 返回git信息
@@ -249,4 +250,5 @@ export class DpGenService {
   async handleHomeNav(projectInfo) {
     // 调用nav
   }
+
 }

@@ -30,5 +30,11 @@ export class DpProjectExtendController {
   async getProject() {
     return this.dpProjectExtendService.getProject()
   }
+
+  @Post('/getProjectInfo')
+  @ApiOperation({ summary: '返回数据以及数据详情' })
+  async getProjectInfo(@Query('id') id: string) {
+    return this.dpProjectExtendService.getProjectInfo(id)
+  }
 }
  
