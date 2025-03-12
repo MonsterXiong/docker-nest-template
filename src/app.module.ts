@@ -74,7 +74,7 @@ import { ServiceModule } from './service.module';
     DpGenModule,
     DpTemplateExtendModule,
     DatabaseModule,
-    // ServiceModule
+    ServiceModule
     // WebSocketModule
   ],
   providers: [
