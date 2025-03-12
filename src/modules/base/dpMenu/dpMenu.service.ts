@@ -143,6 +143,7 @@ export class DpMenuService extends CommonService {
   async saveBatch(newObjectList: Partial<DpMenu>[],oldKeyList:string[],req) {
     let newList = newObjectList
     let oldList = oldKeyList
+    
     if(!newObjectList){
       newList = []
     }

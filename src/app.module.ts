@@ -22,6 +22,7 @@ import { TasksModule } from './modules/system/tasks/tasks.module';
 import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
 import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
+import { DatabaseModule } from './modules/extend/database/databse.module.ts';
 // import { WebSocketModule } from './modules/websocket/websocket.module';
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemp
     DpMenuExtendModule,
     DpGenModule,
     DpTemplateExtendModule,
+    DatabaseModule
     // WebSocketModule
   ],
   providers: [
