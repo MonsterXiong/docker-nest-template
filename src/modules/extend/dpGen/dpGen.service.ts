@@ -15,6 +15,7 @@ import { format } from './dbGen.utils';
 import { ModuleRef } from '@nestjs/core';
 import { handleGit } from 'src/utils/handleGit';
 import { findTreeByArr } from 'src/utils/findTreeByArr';
+import { Method, ServiceMeta } from 'src/decorators/method.decorators';
 
 function buildTree(
   list,
@@ -39,6 +40,10 @@ function buildTree(
 }
 
 @Injectable()
+@ServiceMeta({
+  displayName: '菜单服务',
+  description: '提供菜单相关的操作和数据查询'
+})
 export class DpGenService {
   constructor(
     private moduleRef: ModuleRef,
@@ -107,6 +112,12 @@ export class DpGenService {
     return result;
   }
 
+  @Method({
+    displayName: '获取菜单关联数据',
+    description: '获取菜单及其关联的权限、角色等数据',
+    returnType: 'object',
+    returnDescription: '菜单关联数据对象'
+  })
   async genMenuRelData(id, type, res) {
     const result = await this.getMenuRelData(id, type);
     const TRANS_CODE = TYPE_MAP_CODE[type];

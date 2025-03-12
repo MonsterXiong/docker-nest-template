@@ -23,6 +23,8 @@ import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.m
 import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
 import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
 import { DatabaseModule } from './modules/extend/database/databse.module.ts';
+import { ServiceController } from './service.controller';
+import { ServiceModule } from './service.module';
 // import { WebSocketModule } from './modules/websocket/websocket.module';
 @Module({
   imports: [
@@ -71,7 +73,8 @@ import { DatabaseModule } from './modules/extend/database/databse.module.ts';
     DpMenuExtendModule,
     DpGenModule,
     DpTemplateExtendModule,
-    DatabaseModule
+    DatabaseModule,
+    // ServiceModule
     // WebSocketModule
   ],
   providers: [
@@ -84,6 +87,7 @@ import { DatabaseModule } from './modules/extend/database/databse.module.ts';
     //   useClass: IpRoleGuard,
     // },
   ],
+  controllers:[ServiceController],
   exports: []
 })
 export class AppModule {
