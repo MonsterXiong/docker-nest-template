@@ -8,6 +8,6 @@ import { DpMetaEntityAttr } from './dpMetaEntityAttr.entity';
   imports: [TypeOrmModule.forFeature([DpMetaEntityAttr])],
   controllers: [DpMetaEntityAttrController],
   providers: [DpMetaEntityAttrService],
-  exports:[DpMetaEntityAttrService]
+  exports:[DpMetaEntityAttrService,TypeOrmModule.forFeature([DpMetaEntityAttr])]
 })
 export class DpMetaEntityAttrModule { }

@@ -8,6 +8,6 @@ import { DpMetaEnum } from './dpMetaEnum.entity';
   imports: [TypeOrmModule.forFeature([DpMetaEnum])],
   controllers: [DpMetaEnumController],
   providers: [DpMetaEnumService],
-  exports:[DpMetaEnumService]
+  exports:[DpMetaEnumService,TypeOrmModule.forFeature([DpMetaEnum])]
 })
 export class DpMetaEnumModule { }

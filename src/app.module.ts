@@ -18,13 +18,12 @@ import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from './modules/system/tasks/tasks.module';
+import { SScheduleTaskModule } from './modules/system/sScheduleTask/sScheduleTask.module';
 import { DpMenuExtendModule } from './modules/extend/dpMenuExtend/dpMenuExtend.module';
 import { DpGenModule } from './modules/extend/dpGen/dpGen.module';
 import { DpTemplateExtendModule } from './modules/extend/dpTemplateExtend/dpTemplateExtend.module';
 import { DatabaseModule } from './modules/extend/database/databse.module.ts';
 import { ServiceController } from './service.controller';
-import { ServiceModule } from './service.module';
 // import { WebSocketModule } from './modules/websocket/websocket.module';
 import { DpMetaDatabaseExtendModule } from './modules/extend/dpMetaDatabaseExtend/dpMetaDatabaseExtend.module';
 @Module({
@@ -70,12 +69,11 @@ import { DpMetaDatabaseExtendModule } from './modules/extend/dpMetaDatabaseExten
     CommonModule,
     BootstrapModule,
     ScheduleModule.forRoot(),
-    // TasksModule,
+    SScheduleTaskModule,
     DpMenuExtendModule,
     DpGenModule,
     DpTemplateExtendModule,
     DatabaseModule,
-    ServiceModule,
     DpMetaDatabaseExtendModule,
     // WebSocketModule
   ],

@@ -8,6 +8,6 @@ import { DpMetaDatabase } from './dpMetaDatabase.entity';
   imports: [TypeOrmModule.forFeature([DpMetaDatabase])],
   controllers: [DpMetaDatabaseController],
   providers: [DpMetaDatabaseService],
-  exports:[DpMetaDatabaseService]
+  exports:[DpMetaDatabaseService,TypeOrmModule.forFeature([DpMetaDatabase])]
 })
 export class DpMetaDatabaseModule { }

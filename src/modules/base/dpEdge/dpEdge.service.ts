@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getMetadataArgsStorage, In, Repository } from 'typeorm';
-import { DpMenu } from "./dpMenu.entity";
+import { DpEdge } from "./dpEdge.entity";
 import { queryParams } from '../../common/sqlUtil'
 import * as xlsx from 'xlsx';
 import * as xml2js from 'xml2js';
@@ -10,10 +10,10 @@ import { Response } from 'express';
 import { CommonService } from '../../common/common.service';
 import { nanoid } from 'nanoid';
 @Injectable()
-export class DpMenuService extends CommonService {
+export class DpEdgeService extends CommonService {
   constructor(
-    @InjectRepository(DpMenu)
-    protected readonly repository: Repository<DpMenu>,
+    @InjectRepository(DpEdge)
+    protected readonly repository: Repository<DpEdge>,
   ) { 
     super(repository);
   }
@@ -68,10 +68,10 @@ export class DpMenuService extends CommonService {
   }
 
   // 获取导入模板
-  downloadDpMenuTemplate() {
+  downloadDpEdgeTemplate() {
     // 获取实体的元数据
     const metadata = getMetadataArgsStorage().columns.filter(
-      column => column.target === DpMenu && !column.propertyName.startsWith('sys')
+      column => column.target === DpEdge && !column.propertyName.startsWith('sys')
     );
 
     // 根据元数据创建列定义
@@ -102,19 +102,19 @@ export class DpMenuService extends CommonService {
   async importFromExcel(file: Buffer, req: Request) {
     const wb = xlsx.read(file);
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const data = xlsx.utils.sheet_to_json(ws) as DpMenu[];
+    const data = xlsx.utils.sheet_to_json(ws) as DpEdge[];
     return this.insertBatch(data,req);
   }
   async getItem( id: string) {
     return this.findOne( id);
   }
 
-  async insert(entity: Partial<DpMenu>,req) {
+  async insert(entity: Partial<DpEdge>,req) {
     const { identifiers } = await this.repository.insert(this._createEntity(entity,req));
     return this.findOne(identifiers[0]. id)
   }
 
-  async insertBatch(entitys: Partial<DpMenu>[],req) {
+  async insertBatch(entitys: Partial<DpEdge>[],req) {
     const insertData = entitys.map(entity=>this._createEntity(entity,req))
     const { identifiers } = await this.repository.createQueryBuilder().insert().values(insertData).execute()
     return await this.repository.find({
@@ -127,7 +127,7 @@ export class DpMenuService extends CommonService {
   async queryList(params: any) {
     return queryParams(params, this)
   }
-  async save(entity: Partial<DpMenu>,req) {
+  async save(entity: Partial<DpEdge>,req) {
     if(entity.id){
       const data = await this.findOne(entity.id)
       if(!data){
@@ -140,7 +140,7 @@ export class DpMenuService extends CommonService {
     }
   }
  
-  async saveBatch(newObjectList: Partial<DpMenu>[],oldKeyList:string[],req) {
+  async saveBatch(newObjectList: Partial<DpEdge>[],oldKeyList:string[],req) {
     let newList = newObjectList
     let oldList = oldKeyList
     if(!newObjectList){
@@ -177,7 +177,7 @@ export class DpMenuService extends CommonService {
     };
   }
 
-  async update(entity: Partial<DpMenu>,req) {
+  async update(entity: Partial<DpEdge>,req) {
     const existingData = await this.findOne(entity.id);
     if(!existingData){
       throw new Error('数据不存在')
@@ -186,26 +186,26 @@ export class DpMenuService extends CommonService {
     this.repository.update(entity.id,this._updateEntity(mergeData,req))
   }
 
-  async updateBatch(entity: Partial<DpMenu>[],req) {
+  async updateBatch(entity: Partial<DpEdge>[],req) {
     for await (const entityItem of entity) {
       await this.update(this._updateEntity(entityItem,req),req)
     }
     return
   }
 
-  _createEntity(entity: Partial<DpMenu>,req) {
-    const dpMenu = new DpMenu(); // 创建实体实例
+  _createEntity(entity: Partial<DpEdge>,req) {
+    const dpEdge = new DpEdge(); // 创建实体实例
     if(!entity.id){
       entity.id = nanoid()
     }
     this.setCreateInfo(entity,req)
-    Object.assign(dpMenu, entity); // 复制属性
-    return dpMenu;
+    Object.assign(dpEdge, entity); // 复制属性
+    return dpEdge;
   }
-  _updateEntity(entity: Partial<DpMenu>,req) {
-    const dpMenu = new DpMenu(); // 创建实体实例
+  _updateEntity(entity: Partial<DpEdge>,req) {
+    const dpEdge = new DpEdge(); // 创建实体实例
     this.setUpdateInfo(entity,req)
-    Object.assign(dpMenu, entity); // 复制属性
-    return dpMenu;
+    Object.assign(dpEdge, entity); // 复制属性
+    return dpEdge;
   }
 }

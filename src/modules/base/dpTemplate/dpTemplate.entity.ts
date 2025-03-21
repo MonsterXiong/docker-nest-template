@@ -57,7 +57,7 @@ export class DpTemplate extends CommonEntity {
     nullable: false,
     type: 'varchar',
     comment: '标识',
-    length: 32,
+    length: 255,
   })
   code: string
 
@@ -68,7 +68,7 @@ export class DpTemplate extends CommonEntity {
   @Column({
     name:'layout_param',
     nullable: true,
-    type: 'text',
+    type: 'longtext',
     comment: '布局配置',
   })
   layoutParam: string
@@ -145,7 +145,7 @@ export class DpTemplate extends CommonEntity {
   @Column({
     name:'template_code',
     nullable: true,
-    type: 'text',
+    type: 'longtext',
     comment: '模板代码',
   })
   templateCode: string

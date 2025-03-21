@@ -8,6 +8,6 @@ import { Doc } from './doc.entity';
   imports: [TypeOrmModule.forFeature([Doc])],
   controllers: [DocController],
   providers: [DocService],
-  exports:[DocService]
+  exports:[DocService,TypeOrmModule.forFeature([Doc])]
 })
 export class DocModule { }

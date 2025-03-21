@@ -8,6 +8,6 @@ import { DpTemplate } from './dpTemplate.entity';
   imports: [TypeOrmModule.forFeature([DpTemplate])],
   controllers: [DpTemplateController],
   providers: [DpTemplateService],
-  exports:[DpTemplateService]
+  exports:[DpTemplateService,TypeOrmModule.forFeature([DpTemplate])]
 })
 export class DpTemplateModule { }

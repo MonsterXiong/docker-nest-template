@@ -8,6 +8,6 @@ import { DpTemplatePrompt } from './dpTemplatePrompt.entity';
   imports: [TypeOrmModule.forFeature([DpTemplatePrompt])],
   controllers: [DpTemplatePromptController],
   providers: [DpTemplatePromptService],
-  exports:[DpTemplatePromptService]
+  exports:[DpTemplatePromptService,TypeOrmModule.forFeature([DpTemplatePrompt])]
 })
 export class DpTemplatePromptModule { }

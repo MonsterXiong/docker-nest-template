@@ -8,6 +8,6 @@ import { DpMenu } from './dpMenu.entity';
   imports: [TypeOrmModule.forFeature([DpMenu])],
   controllers: [DpMenuController],
   providers: [DpMenuService],
-  exports:[DpMenuService]
+  exports:[DpMenuService,TypeOrmModule.forFeature([DpMenu])]
 })
 export class DpMenuModule { }
