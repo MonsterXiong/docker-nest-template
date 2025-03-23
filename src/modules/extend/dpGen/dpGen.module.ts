@@ -6,6 +6,7 @@ import { CommonModule } from 'src/modules/extend/common/common.module';
 import { DpMenuExtendModule } from '../dpMenuExtend/dpMenuExtend.module';
 import { DpProjectExtendModule } from '../dpProjectExtend/dpProjectExtend.module';
 import { DpTemplateExtendModule } from '../dpTemplateExtend/dpTemplateExtend.module';
+import { DbModule } from '../db';
 @Module({
   imports:[
     DpTemplateModule,
@@ -13,6 +14,7 @@ import { DpTemplateExtendModule } from '../dpTemplateExtend/dpTemplateExtend.mod
     DpMenuExtendModule,
     DpProjectExtendModule,
     DpTemplateExtendModule,
+    DbModule
   ],
   controllers: [DpGenController],
   providers: [DpGenService],

@@ -13,8 +13,9 @@ import { DpMenuExtendService } from 'src/modules/extend/dpMenuExtend/dpMenuExten
 import { DpProject } from 'src/modules/base/dpProject';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DpMenu } from 'src/modules/base/dpMenu';
-import { DpStoreService } from 'src/modules/base/dpStore';
+import { DpMenu,  } from 'src/modules/base/dpMenu';
+import { DpStore, DpStoreService } from 'src/modules/base/dpStore';
+import { DpMenuDetail,  } from 'src/modules/base/dpMenuDetail';
 @Injectable()
 export class DpProjectExtendService {
   constructor(
@@ -27,7 +28,7 @@ export class DpProjectExtendService {
 
     @InjectRepository(DpProject)
     private readonly dpProjectRepository: Repository<DpProject>,
-  ) {}
+  ) { }
 
   async getProject() {
     const data = await this.dpProjectRepository
@@ -119,5 +120,56 @@ export class DpProjectExtendService {
   async getTableAndColumnByProjectId(id) {
     const dbConfig = await this.getDbConfigByProjectId(id);
     return this.dbService.getTableList(dbConfig);
+  }
+
+  // 删除项目及项目相关的数据
+  async deleteProjectById(id, req) {
+    const data: any = await this.dpProjectRepository
+      .createQueryBuilder('a')
+      .leftJoinAndMapMany(
+        'a.projectInfo',
+        DpProjectInfo,
+        'b',
+        'b.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+      )
+      .leftJoinAndMapMany(
+        'a.menuList',
+        DpMenu,
+        'c',
+        'c.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+      )
+      .leftJoinAndMapMany(
+        'a.storeList',
+        DpStore,
+        'e',
+        'e.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+      ).leftJoinAndMapMany(
+        'a.configList',
+        DpEnvConfig,
+        'f',
+        'f.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+      )
+      .where('a.id = :id', { id })
+      .getOne();
+
+    const { projectInfo, menuList,  storeList, configList } = data
+    const projectInfoIds = projectInfo.map(item => item.id)
+    const menuIds = menuList.map(item => item.id)
+    const storeIds = storeList.map(item => item.id)
+    const configIds = configList.map(item => item.id)
+
+
+    return await Promise.all([
+      // 删除项目
+      this.dpProjectService.delete(id, req),
+      // 删除项目详情
+      this.dpProjectInfoService.deleteBatch(projectInfoIds, req),
+      // 删除菜单以及菜单详情
+      this.dpMenuExtendService.deleteBatch(menuIds, req),
+      // 删除全局状态
+      this.dpStoreService.deleteBatch(storeIds, req),
+      // 删除配置项
+      this.dpEnvConfigService.deleteBatch(configIds, req),
+    ])
   }
 }

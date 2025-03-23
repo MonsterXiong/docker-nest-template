@@ -197,6 +197,23 @@ constructor(private readonly configService: ConfigService,){}
     });
   }
 
+  async queryDatabaseByConfig(options: {}){
+    const dbConfig = {
+      type :'mysql',
+      host:"",
+      port:3306,
+      user:"",
+      password:"",
+      database: "mysql",
+      ...options
+    }
+    const queryStr= `SHOW DATABASES WHERE \`Database\` NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys')`
+    const [data]:any = await this.executeQuery(dbConfig,async connection=>{
+      return connection.query(queryStr)
+    })
+    return data.map(item=>item.Database)
+  }
+
   // 生命周期方法
   async onModuleInit() {
     // 初始化时的处理逻辑

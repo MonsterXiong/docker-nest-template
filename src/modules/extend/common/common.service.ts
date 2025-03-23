@@ -10,7 +10,7 @@ import {
   getServiceBatch,
 } from './utils/getSwaggerService';
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
-import { GenTypeMapEnum } from 'src/enums/genTypeMap.enum';
+import { GenFeEnum } from 'src/enums/genTypeMap.enum';
 import { DpTemplatePromptService } from 'src/modules/base/dpTemplatePrompt';
 import { formatObject } from './utils/formatObject';
 import QueryConditionBuilder from 'src/utils/queryCondition';
@@ -151,7 +151,7 @@ export class CommonService implements OnApplicationBootstrap {
     }
     return list.map((item) => {
       let codeType = type;
-      if (type == GenTypeMapEnum.PAGE) {
+      if (type == GenFeEnum.PAGE) {
         const configParam = JSON.parse(item.menuDetail.configParam);
         codeType = configParam?.code || 'Empty';
       }

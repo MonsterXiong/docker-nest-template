@@ -6,17 +6,15 @@ import { DpProjectInfoModule } from 'src/modules/base/dpProjectInfo';
 import { DbModule } from '../db';
 import { DpEnvConfigModule } from 'src/modules/base/dpEnvConfig';
 import { DpMenuExtendModule } from '../dpMenuExtend/dpMenuExtend.module';
-import { DpMenuModule } from 'src/modules/base/dpMenu';
 import { DpStoreModule } from 'src/modules/base/dpStore';
 @Module({
   imports: [
     DpProjectModule,
     DpProjectInfoModule,
-    DbModule,
+    DpStoreModule,
     DpEnvConfigModule,
-    DpMenuModule,
+    DbModule,
     DpMenuExtendModule,
-    DpStoreModule
   ],
   controllers: [DpProjectExtendController],
   providers: [DpProjectExtendService],

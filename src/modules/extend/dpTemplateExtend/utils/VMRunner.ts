@@ -10,8 +10,6 @@ export class VMRunner {
 
   // 私有化构造函数防止外部 new 操作
   private constructor(options={}) {
-    console.log(options,'XXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxx');
-    
     this.vm = new VM({
       timeout: 1000,
       sandbox: {

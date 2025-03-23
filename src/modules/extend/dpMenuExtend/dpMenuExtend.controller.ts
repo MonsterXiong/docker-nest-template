@@ -39,6 +39,9 @@ export class DpMenuExtendController {
     return this.dpMenuExtendService.insert(entity,req);
   }
 
-
-
+  @Post('cleanMenu')
+  @ApiOperation({ summary: '清洗菜单' })
+  cleanMenu(@Req() req: Request) {
+    return this.dpMenuExtendService.cleanMenu(req);
+  }
 }

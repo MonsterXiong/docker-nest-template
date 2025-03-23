@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { DpProjectExtendService } from './dpProjectExtend.service';
 import { ApiOperation } from '@nestjs/swagger';
 
@@ -35,6 +35,12 @@ export class DpProjectExtendController {
   @ApiOperation({ summary: '返回数据以及数据详情' })
   async getProjectInfo(@Query('id') id: string) {
     return this.dpProjectExtendService.getProjectInfo(id)
+  }
+
+  @Post('/deleteProjectById')
+  @ApiOperation({ summary: '删除项目' })
+  async deleteProject(@Query('id') id: string,@Req() req: Request) {
+    return this.dpProjectExtendService.deleteProjectById(id,req)
   }
 }
  
