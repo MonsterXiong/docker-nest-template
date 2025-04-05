@@ -161,11 +161,13 @@ export class DpGenController {
 
     const projectPath = path.join(os.homedir(),'.monster_dp/temp')
     
-    await uncompress('public/framework.fe.zip', projectPath)
+    // await uncompress('public/framework.fe.zip', projectPath)
     // 解压到当前目录
 
     return outputCode(res, projectData.fe, 'project',projectPath);
   }
+
+  
 
   @Get()
   @ApiOperation({ summary: '生成项目流程-未启动' })

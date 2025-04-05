@@ -43,18 +43,6 @@ export class DpProjectExtendService {
     return data;
   }
 
-  async getProjectWithProjectInfo(id) {
-    //   console.time('start')
-    //  const data = await this.dpProjectRepository
-    //   .createQueryBuilder('a')
-    //   .leftJoinAndMapOne('a.projectInfo',DpProjectInfo,'b','b.bind_project = a.id AND b.sys_is_del IS NOT NULL')
-    //   .leftJoinAndMapMany('a.menuList',DpMenu,'c','c.bind_project = a.id AND c.sys_is_del IS NOT NULL')
-    //   .leftJoinAndMapMany('a.envList',DpEnvConfig,'d','d.bind_project = a.id AND d.sys_is_del IS NOT NULL')
-    //   .where('a.id = :id',{id}).getOne()
-    //   console.timeEnd('start')
-    //   return data
-  }
-
   async getDbConfigByProjectId(id): Promise<DatabaseConfigDto> {
     const project = await this.getProjectInfo(id);
     if (!project?.projectInfo) {
@@ -122,6 +110,25 @@ export class DpProjectExtendService {
     return this.dbService.getTableList(dbConfig);
   }
 
+    // 根据项目id删除菜单
+    async deleteMenuByProjectId(id,req) {
+      const data: any = await this.dpProjectRepository
+      .createQueryBuilder('a')
+      .leftJoinAndMapMany(
+        'a.menuList',
+        DpMenu,
+        'b',
+        'b.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+      )
+      .where('a.id = :id', { id })
+      .getOne();
+
+      const {  menuList } = data
+      const menuIds = menuList.map(item => item.id)
+       // 删除菜单以及菜单详情
+       return await this.dpMenuExtendService.deleteBatch(menuIds, req)
+    }
+
   // 删除项目及项目相关的数据
   async deleteProjectById(id, req) {
     const data: any = await this.dpProjectRepository
@@ -136,18 +143,18 @@ export class DpProjectExtendService {
         'a.menuList',
         DpMenu,
         'c',
-        'c.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+        'c.bind_project = a.id AND c.sys_is_del IS NOT NULL'
       )
       .leftJoinAndMapMany(
         'a.storeList',
         DpStore,
         'e',
-        'e.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+        'e.bind_project = a.id AND e.sys_is_del IS NOT NULL'
       ).leftJoinAndMapMany(
         'a.configList',
         DpEnvConfig,
         'f',
-        'f.bind_project = a.id AND b.sys_is_del IS NOT NULL'
+        'f.bind_project = a.id AND f.sys_is_del IS NOT NULL'
       )
       .where('a.id = :id', { id })
       .getOne();

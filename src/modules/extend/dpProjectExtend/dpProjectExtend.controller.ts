@@ -19,11 +19,6 @@ export class DpProjectExtendController {
   async getTableAndColumnByProjectId(@Query('id') id: string) {
     return this.dpProjectExtendService.getTableAndColumnByProjectId(id)
   }
-  @Post('/db/get')
-  @ApiOperation({ summary: 'res' })
-  async get(@Query('id') id: string) {
-    return this.dpProjectExtendService.getProjectWithProjectInfo(id)
-  }
 
   @Post('/getProject')
   @ApiOperation({ summary: '返回数据以及数据详情' })
@@ -41,6 +36,12 @@ export class DpProjectExtendController {
   @ApiOperation({ summary: '删除项目' })
   async deleteProject(@Query('id') id: string,@Req() req: Request) {
     return this.dpProjectExtendService.deleteProjectById(id,req)
+  }
+
+  @Post('/deleteMenuByProjectId')
+  @ApiOperation({ summary: '根据项目id删除菜单' })
+  async deleteMenuByProjectId(@Query('id') id: string,@Req() req: Request) {
+    return this.dpProjectExtendService.deleteMenuByProjectId(id,req)
   }
 }
  

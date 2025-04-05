@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Post, Query, Req, Res } from '@nestjs/common';
 import { DpMenuExtendService } from './dpMenuExtend.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { QueryCondition } from 'src/interfaces/queryCondition.interface';
 import { DpmenuExtendDto } from './dpMenuExtend.dto';
+import { GenEnum } from 'src/enums/gen.enum';
 
 @Controller('dpMenuExtend')
 export class DpMenuExtendController {
@@ -43,5 +44,25 @@ export class DpMenuExtendController {
   @ApiOperation({ summary: '清洗菜单' })
   cleanMenu(@Req() req: Request) {
     return this.dpMenuExtendService.cleanMenu(req);
+  }
+
+  @Post('getServiceById')
+  @ApiOperation({ summary: '获取service通过菜单Id' })
+  @ApiQuery({
+    name: 'id',
+    required: true,
+  })
+  getServiceById(@Query('id') id: string, @Res() res: Response) {
+    return this.dpMenuExtendService.getServiceById(id,GenEnum.NO_GEN,res);
+  }
+
+  @Post('genServiceById')
+  @ApiOperation({ summary: '生成service通过菜单Id' })
+  @ApiQuery({
+    name: 'id',
+    required: true,
+  })
+  genServiceById(@Query('id') id: string,@Res() res: Response) {
+    return this.dpMenuExtendService.getServiceById(id,GenEnum.GEN,res);
   }
 }

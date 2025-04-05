@@ -13,7 +13,6 @@ import { IpMiddleware } from './middlewares/ip.middleware';
 import { GenModule } from './modules/extend/gen/gen.module';
 import { DbModule } from './modules/extend/db/db.module';
 import MODULE_LIST from './modules';
-import { NavExtendModule } from './modules/extend/navExtend/navExtend.module';
 import { CommonModule } from './modules/extend/common/common.module';
 import { BootstrapModule } from './modules/extend/bootstrap/bootstrap.module';
 import { DpProjectExtendModule } from './modules/extend/dpProjectExtend/dpProjectExtend.module';
@@ -63,7 +62,6 @@ import { DpMetaDatabaseExtendModule } from './modules/extend/dpMetaDatabaseExten
     SCategoryTypeModule,
     GenModule,
     DbModule,
-    NavExtendModule,
     ...MODULE_LIST,
     DpProjectExtendModule,
     CommonModule,

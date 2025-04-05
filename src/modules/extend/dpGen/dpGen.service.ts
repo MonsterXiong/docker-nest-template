@@ -12,13 +12,14 @@ import { DpTemplateService } from 'src/modules/base/dpTemplate';
 import { DpTemplateExtendService } from '../dpTemplateExtend/dpTemplateExtend.service';
 import { outputCode } from 'src/utils/outputCode';
 import { listToTree } from 'src/utils/treeTool';
-import { format } from './dbGen.utils';
+import { format, removeFullPath } from './dbGen.utils';
 import { ModuleRef } from '@nestjs/core';
 import { handleGit } from 'src/utils/handleGit';
 import { findTreeByArr } from 'src/utils/findTreeByArr';
 import { Method, ServiceMeta } from 'src/decorators/method.decorators';
 import { DbService } from '../db';
 import { GenEnum } from 'src/enums/gen.enum';
+import path from 'path';
 
 
 // 定义接口和类型
@@ -88,6 +89,8 @@ function buildTree(
 
   return map.get(topId);
 }
+
+
 
 // 策略类
 // =======================================
@@ -241,7 +244,7 @@ export class DpGenService {
  * @param type 生成类型
  * @returns 项目相关数据
  */
-  async getProjectRelData(id: string, type: GenFeEnum): Promise<any> {
+  async getProjectRelData(id: string, type: GenFeEnum,isFullPath=false): Promise<any> {
     try {
       const projectInfo = await this.dpProjectExtendService.getProjectInfo(id);
       const isSingle = TYPE_MAP_SINGLE[type];
@@ -257,42 +260,50 @@ export class DpGenService {
         type,
         isSingle,
       );
-      return format(result, isSingle, transCode);
+      const codeData =  format(result, isSingle, transCode);
+      if(!isFullPath){
+        removeFullPath(codeData,type)
+      }
+      return codeData
     } catch (error) {
       console.error(`获取项目相关数据失败: ${error.message}`);
       throw error;
     }
   }
 
+  async getCodeByType(projectInfo={},paramsData,type,isGen,res){
+    const isSingle = TYPE_MAP_SINGLE[type];
+    const transCode = TYPE_MAP_CODE[type];
+    if (!paramsData) {
+      console.log(`不存在paramsData----------${type}`);
+      return [];
+    }
+    const result = this.commonService.getCode(
+      projectInfo,
+      paramsData,
+      type,
+      isSingle,
+    );
+    const data =format(result, isSingle, transCode);
+    if(GenEnum.GEN == isGen){
+      return outputCode(res, data, type);
+    }else{
+      res.status(200).json({
+        statusCode:200,
+        code: 200,
+        message: '请求成功',
+        timestamp: new Date().toISOString(),
+        data,
+      });
+      return
+    }
+  }
+
   async getProjectRelData1(id: string, type: GenFeEnum,isGen:GenEnum,res: any): Promise<any> {
     try {
       const projectInfo = await this.dpProjectExtendService.getProjectInfo(id);
-      const isSingle = TYPE_MAP_SINGLE[type];
-      const transCode = TYPE_MAP_CODE[type];
       const paramsData = await this.paramsDataContext.getParamsData(type, id);
-      if (!paramsData) {
-        console.log(`不存在paramsData----------${type}`);
-        return [];
-      }
-      const result = this.commonService.getCode(
-        projectInfo,
-        paramsData,
-        type,
-        isSingle,
-      );
-      const data =format(result, isSingle, transCode);
-      if(GenEnum.GEN == isGen){
-        return outputCode(res, data, type);
-      }else{
-        res.status(200).json({
-          statusCode:200,
-          code: 200,
-          message: '请求成功',
-          timestamp: new Date().toISOString(),
-          data,
-        });
-        return
-      }
+      return this.getCodeByType(projectInfo,paramsData,type,isGen,res)
     } catch (error) {
       console.error(`获取项目相关数据失败: ${error.message}`);
       throw error;
@@ -334,7 +345,7 @@ export class DpGenService {
   async getFeProject(id: string): Promise<any> {
     const genRequest = [];
     for (const key in GenFeEnum) {
-      genRequest.push(this.getProjectRelData(id, GenFeEnum[key]));
+      genRequest.push(this.getProjectRelData(id, GenFeEnum[key],true));
     }
     const [
       pageList,
@@ -637,12 +648,15 @@ export class DpGenService {
       menu.bindProject,
     );
     const isSingle = TYPE_MAP_SINGLE[type];
-    return this.commonService.getCode(
+     const result = this.commonService.getCode(
       projectInfo,
       [menu],
       type,
       isSingle,
     );
+    const transCode = TYPE_MAP_CODE[type];
+    const codeData = format(result,isSingle,transCode)
+    return removeFullPath(codeData,type)
   }
 
 
@@ -666,8 +680,9 @@ export class DpGenService {
   })
   async genMenuRelData(id: string, type: GenFeEnum, res: any): Promise<any> {
     const result = await this.getMenuRelData(id, type);
-    const transCode = TYPE_MAP_CODE[type];
-    const isSingle = TYPE_MAP_SINGLE[type];
-    return outputCode(res, format(result, isSingle, transCode), type);
+    // const transCode = TYPE_MAP_CODE[type];
+    // const isSingle = TYPE_MAP_SINGLE[type];
+    // const codeData = format(result, isSingle, transCode)
+    return outputCode(res,result, type);
   }
 }

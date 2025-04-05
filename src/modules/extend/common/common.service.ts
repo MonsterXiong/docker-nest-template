@@ -117,6 +117,11 @@ export class CommonService implements OnApplicationBootstrap {
 
   _genCode(type, context) {
     const template = this.getTemplate(type);
+    if(!template){
+      console.log(template,type,'template');
+      return 
+      
+    }
     const templateData = this.dpTemplateExtendService.runFunc(
       template.templateCode,
       context,

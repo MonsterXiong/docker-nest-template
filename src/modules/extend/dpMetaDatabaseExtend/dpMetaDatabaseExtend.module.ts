@@ -5,9 +5,10 @@ import { DpMetaDatabaseModule } from 'src/modules/base/dpMetaDatabase';
 import { DpMetaEntityAttrModule } from 'src/modules/base/dpMetaEntityAttr';
 import { DpMetaEntityModule } from 'src/modules/base/dpMetaEntity';
 import { CommonModule } from '../common/common.module';
+import { DpMetaEnumModule } from 'src/modules/base/dpMetaEnum';
 
 @Module({
-  imports:[DpMetaDatabaseModule,DpMetaEntityAttrModule,DpMetaEntityModule,CommonModule],
+  imports:[DpMetaDatabaseModule,DpMetaEntityAttrModule,DpMetaEntityModule,CommonModule,DpMetaEnumModule],
   controllers: [DpMetaDatabaseExtendController],
   providers: [DpMetaDatabaseExtendService],
   exports:[DpMetaDatabaseExtendService]

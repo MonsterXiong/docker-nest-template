@@ -43,6 +43,28 @@ export class DpMetaDatabaseExtendController {
     return await this.dpMetaDatabaseExtendService.getSql(id)
   }
 
+  @Post('genEnum')
+  @ApiOperation({ summary: '生成数据体系下的enum' })
+  async genEnum(@Query('databaseId') databaseId: string, @Res() res: Response){
+    return await this.dpMetaDatabaseExtendService.genEnum(databaseId,res)
+  }
+  @Post('genEnumById')
+  @ApiOperation({ summary: '生成单条enum' })
+  async genEnumById(@Query('enumId') enumId: string, @Res() res: Response){
+    return await this.dpMetaDatabaseExtendService.genEnumById(enumId,res)
+  }
+
+  @Post('getEnum')
+  @ApiOperation({ summary: '获取数据体系下的enum' })
+  async getEnum(@Query('databaseId') databaseId: string){
+    return await this.dpMetaDatabaseExtendService.getEnum(databaseId)
+  }
+  @Post('getEnumById')
+  @ApiOperation({ summary: '获取单条enum' })
+  async getEnumById(@Query('enumId') enumId: string){
+    return await this.dpMetaDatabaseExtendService.getEnumById(enumId)
+  }
+
   @Post('getTableSql')
   @ApiOperation({ summary: '获取表sql' })
   async getTableSql(@Query('entityId') entityId: string){

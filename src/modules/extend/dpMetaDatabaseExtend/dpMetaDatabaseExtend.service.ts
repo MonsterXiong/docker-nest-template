@@ -16,6 +16,9 @@ import { CommonService } from '../common/common.service';
 import { MetaDatabaseAdapter } from './adapter/MetaDatabaseAdapter';
 import { outputCode } from 'src/utils/outputCode';
 import { format } from '../dpGen/dbGen.utils';
+import { DpMetaEnum } from 'src/modules/base/dpMetaEnum';
+import { DpMetaEnumItem } from 'src/modules/base/dpMetaEnumItem';
+import { formatEnum } from './adapter/formatEnum';
 @Injectable()
 export class DpMetaDatabaseExtendService {
   constructor(
@@ -28,6 +31,9 @@ export class DpMetaDatabaseExtendService {
 
     @InjectRepository(DpMetaEntity)
     private readonly dpMetaEntityRepository: Repository<DpMetaEntity>,
+
+    @InjectRepository(DpMetaEnum)
+    private readonly dpMetaEnumRepository: Repository<DpMetaEnum>,
   ) {}
 
   async getMetaDatabase() {
@@ -47,6 +53,20 @@ export class DpMetaDatabaseExtendService {
         {code:'bind_project'}
       )
       .printSql()
+      .getMany();
+    return data;
+  }
+
+  async getMetaEnum(databaseId){
+    const data = await this.dpMetaEnumRepository
+    .createQueryBuilder('a')
+      .leftJoinAndMapMany(
+        'a.attributes',
+        DpMetaEnumItem,
+        'b',
+        'b.bindEnum = a.id AND b.sys_is_del IS NOT NULL',
+      )
+      .where('a.bind_database = :id',{id:databaseId})
       .getMany();
     return data;
   }
@@ -71,6 +91,22 @@ export class DpMetaDatabaseExtendService {
       .getOne();
     return data;
   }
+
+  async getMetaEnumById(id) {
+    const data = await this.dpMetaEnumRepository
+      .createQueryBuilder('a')
+      .leftJoinAndMapMany(
+        'a.attributes',
+        DpMetaEnumItem,
+        'b',
+        'b.bindEnum = a.id AND b.sys_is_del IS NOT NULL',
+      )
+      .where('a.id = :id', { id })
+      .getOne();
+    return data;
+  }
+
+  
 
   async getMetaEntityById(id) {
     const data = await this.dpMetaEntityRepository
@@ -141,6 +177,42 @@ export class DpMetaDatabaseExtendService {
       true,
     );
     return format(result, true, 'name');
+  }
+
+  async genEnum(id,res){
+    const result = await this.getEnum(id)
+    return outputCode(res, result, 'meta_enum');
+  }
+  
+  async getEnum(id){
+    const enumList = await this.getMetaEnum(id)
+    const paramsData = formatEnum(enumList)
+    const result = this.commonService.getCode(
+      {},
+      paramsData,
+      'meta_enum',
+      false,
+    );
+    return format(result, false, 'code');
+  }
+
+  async genEnumById(enumId,res){
+    const result = await this.getEnumById(enumId)
+    return outputCode(res, result, 'meta_enum');
+  }
+  
+  async getEnumById(enumId){
+    const  enumData = await this.getMetaEnumById(enumId)
+    const paramsData = formatEnum([enumData])
+    // // 清洗数据，还需要考虑命名的问题
+    const result = this.commonService.getCode(
+      {},
+      [paramsData[0]],
+      'meta_enum',
+      false,
+    );
+    
+    return format(result, false, 'code');
   }
 
   async getTableSql(entityId){

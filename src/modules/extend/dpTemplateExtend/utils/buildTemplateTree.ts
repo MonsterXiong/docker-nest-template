@@ -101,9 +101,32 @@ export function handleProceeQuote(nodes) {
       }else{
         // 处理quote
         const quoteModule = nodes.find(item=>item.code === child.code)
-        const quoteModulePath = quoteModule.relativePath
+        if(!quoteModule){
+          console.log('没有找到对应的引用模板',child.code);
+          return
+        }
+        // 处理引用的入口页面
+        const quoteModuleData = {
+          ...quoteModule,
+          children:quoteModule.children.map(item=>{
+            let relativePath = item?.relativePath
+            let filePath = item?.filePath
+            if(relativePath === '{Code}'){
+              relativePath = 'Index'
+              filePath = filePath.replace('{Code}','Index')
+            }
+            return {
+              ...item,
+              relativePath,
+              filePath
+            }
 
-        const quoteChildren = quoteModule.children.map(item=>{
+      })
+        }
+        
+        const quoteModulePath = quoteModuleData.relativePath
+
+        const quoteChildren = quoteModuleData.children.map(item=>{
           // 清洗filePath
           const prefixPath = child.filePath.replace(node.filePath,'')
           const replacePath = `${node.relativePath?prefixPath:''}`
